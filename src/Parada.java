@@ -25,4 +25,8 @@ public class Parada {
     public void agregarRuta(Ruta ruta) {
         this.misRutas.add(ruta);
     }
+
+    public void eliminarRuta(Ruta ruta) {
+        this.misRutas.remove(ruta);
+    }
 }
