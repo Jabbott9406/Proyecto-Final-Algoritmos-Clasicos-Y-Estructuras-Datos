@@ -5,17 +5,23 @@ public class Ruta {
     private Parada destino;
     private double distancia;
     private double tiempo;
+    private double tiempoBase;
     private double costo;
     private boolean estado; // True: Esta habilitada. False: ruta no disponible por accidente o x situación.
+    private String evento;
+    private String transbordo;
 
-    public Ruta(String nombre, Parada inicio, Parada destino, double distancia, double tiempo, double costo) {
+    public Ruta(String nombre, Parada inicio, Parada destino, double distancia, double tiempo, double costo, String evento, String transbordo) {
         this.nombre = nombre;
         this.inicio = inicio;
         this.destino = destino;
         this.distancia = distancia;
         this.tiempo = tiempo;
+        this.tiempoBase = tiempo; // tiempo original
         this.costo = costo;
-        this.estado = false;
+        this.estado = true;        // por defecto habilitada
+        this.evento = "Normal";    // por defecto normal
+        this.transbordo = transbordo;
     }
 
     public String getNombre() {
@@ -73,4 +79,36 @@ public class Ruta {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
+
+    public String getEvento() {
+        return evento;
+    }
+
+    public void setEvento(String evento) {
+        this.evento = evento;
+    }
+
+    public String getTransbordo() {
+        return transbordo;
+    }
+
+    public void setTransbordo(String transbordo) {
+        this.transbordo = transbordo;
+    }
+
+    public void resetTiempo() {
+        this.tiempo = this.tiempoBase;
+    }
+
 }
+
+/**
+ * Nombre: resetTiempo
+ * Parámetros: ninguno
+ * Funcionamiento: restablece el tiempo de la ruta al tiempo base original.
+ * Esto se utiliza antes de aplicar cualquier evento que pueda modificar la duración
+ * de la ruta, como retrasos, lluvia u otros incidentes, asegurando que el tiempo
+ * no se acumule al simular múltiples eventos.
+ * Retorno: no retorna ningún valor.
+ */
+
