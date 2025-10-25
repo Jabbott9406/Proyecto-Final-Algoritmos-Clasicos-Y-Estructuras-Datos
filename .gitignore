@@ -1,30 +1,57 @@
-### IntelliJ IDEA ###
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs/temporales
+*.log
+*.tmp
+
+# Java
+*.class
+*.ctxt
+*.hprof
+hs_err_pid*
+replay_pid*
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-.kotlin
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
+# VS Code
 .vscode/
 
-### Mac OS ###
-.DS_Store
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Maven
+target/
+!mvnw
+!mvnw.cmd
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+!.mvn/wrapper/MavenWrapperDownloader.java
+
+# Gradle
+.gradle/
+build/
+!gradlew
+!gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# Entornos
+.env
