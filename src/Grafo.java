@@ -132,6 +132,10 @@ public class Grafo {
         }
     }
 
+    public List<Ruta> getRutasDeSalida(Parada parada){
+        return mapa.get(parada);
+    }
+
 
 
 
