@@ -83,6 +83,19 @@ public class Ruta {
         this.estado = estado;
     }
 
+    public Double getPesoByFiltro(String filtro) {
+        switch (filtro) {
+            case "distancia":
+                return distancia;
+            case "tiempo":
+                return tiempo;
+            case "costo":
+                return costo;
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return nombre + " --> " + destino;
