@@ -5,23 +5,20 @@ public class Ruta {
     private Parada destino;
     private double distancia;
     private double tiempo;
-    private double tiempoBase;
     private double costo;
     private boolean estado; // True: Esta habilitada. False: ruta no disponible por accidente o x situación.
-    private String evento;
-    private String transbordo;
 
-    public Ruta(String nombre, Parada inicio, Parada destino, double distancia, double tiempo, double costo, String evento, String transbordo) {
+    public Ruta(String nombre, Parada inicio, Parada destino, double distancia, double tiempo, double costo) {
+        if(nombre == null || nombre.isBlank()) throw new IllegalArgumentException("Nombre no puede ser null/estar vacio");
+        if(inicio == null || destino == null) throw  new IllegalArgumentException("Inicio/destino no pueden ser null");
+        if(distancia < 0 || tiempo < 0 || costo < 0) throw new IllegalArgumentException("Distancia/tiempo/costo no pueden ser negativos");
         this.nombre = nombre;
         this.inicio = inicio;
         this.destino = destino;
         this.distancia = distancia;
         this.tiempo = tiempo;
-        this.tiempoBase = tiempo; // tiempo original
         this.costo = costo;
-        this.estado = true;        // por defecto habilitada
-        this.evento = "Normal";    // por defecto normal
-        this.transbordo = transbordo;
+        this.estado = true;
     }
 
     public String getNombre() {
@@ -29,6 +26,7 @@ public class Ruta {
     }
 
     public void setNombre(String nombre) {
+        if(nombre == null || nombre.isBlank()) throw new IllegalArgumentException("Nombre no puede ser null");
         this.nombre = nombre;
     }
 
@@ -37,6 +35,7 @@ public class Ruta {
     }
 
     public void setInicio(Parada inicio) {
+        if(inicio == null) throw new IllegalArgumentException("Inicio no puede ser null");
         this.inicio = inicio;
     }
 
@@ -45,6 +44,7 @@ public class Ruta {
     }
 
     public void setDestino(Parada destino) {
+        if(destino == null) throw new IllegalArgumentException("Destino no puede ser null");
         this.destino = destino;
     }
 
@@ -53,6 +53,7 @@ public class Ruta {
     }
 
     public void setDistancia(double distancia) {
+        if(distancia < 0) throw new IllegalArgumentException("Distancia no puede ser negativo");
         this.distancia = distancia;
     }
 
@@ -61,6 +62,7 @@ public class Ruta {
     }
 
     public void setTiempo(double tiempo) {
+        if(tiempo < 0)throw new IllegalArgumentException("Tiempo no puede ser negativo");
         this.tiempo = tiempo;
     }
 
@@ -69,6 +71,7 @@ public class Ruta {
     }
 
     public void setCosto(double costo) {
+        if(costo < 0) throw new IllegalArgumentException("Costo no puede ser negativo");
         this.costo = costo;
     }
 
@@ -80,35 +83,21 @@ public class Ruta {
         this.estado = estado;
     }
 
-    public String getEvento() {
-        return evento;
+    public Double getPesoByFiltro(String filtro) {
+        switch (filtro) {
+            case "distancia":
+                return distancia;
+            case "tiempo":
+                return tiempo;
+            case "costo":
+                return costo;
+        }
+
+        return null;
     }
 
-    public void setEvento(String evento) {
-        this.evento = evento;
+    @Override
+    public String toString() {
+        return nombre + " --> " + destino;
     }
-
-    public String getTransbordo() {
-        return transbordo;
-    }
-
-    public void setTransbordo(String transbordo) {
-        this.transbordo = transbordo;
-    }
-
-    public void resetTiempo() {
-        this.tiempo = this.tiempoBase;
-    }
-
 }
-
-/**
- * Nombre: resetTiempo
- * Parámetros: ninguno
- * Funcionamiento: restablece el tiempo de la ruta al tiempo base original.
- * Esto se utiliza antes de aplicar cualquier evento que pueda modificar la duración
- * de la ruta, como retrasos, lluvia u otros incidentes, asegurando que el tiempo
- * no se acumule al simular múltiples eventos.
- * Retorno: no retorna ningún valor.
- */
-
