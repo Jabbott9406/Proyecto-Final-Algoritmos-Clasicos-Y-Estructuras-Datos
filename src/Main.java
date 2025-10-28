@@ -37,7 +37,5 @@ public class Main {
         Ruta r12 = mapa.agregarRuta("R12", p7, p8,5,8,0);
         Ruta r13 = mapa.agregarRuta("R13", p6, p8,4,8,0);
 
-       RutaMasCorta camino = new Dijkstra().rutaMasCorta(mapa,p1,p6,"distancia");
-       System.out.println(camino);
     }
 }
