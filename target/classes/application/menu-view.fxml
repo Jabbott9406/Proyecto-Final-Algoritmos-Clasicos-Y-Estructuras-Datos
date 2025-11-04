@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
+   <children>
+      <AnchorPane layoutX="200.0" layoutY="41.0" prefHeight="83.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <MenuBar layoutY="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="Registro">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#RegistrarParadaClick" text="Registrar Parada" />
+                        <MenuItem mnemonicParsing="false" text="Registrar Ruta" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Listados">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Listado Parada" />
+                        <MenuItem mnemonicParsing="false" text="Listado Ruta" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Salir">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#CerrarAplicacionClick" text="Cerrar Sesion" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

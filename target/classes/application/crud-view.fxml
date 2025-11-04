@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.CRUDController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <TextField fx:id="nombreParadaField" promptText="Nombre de la parada"/>
+    <Button text="Agregar Parada" onAction="#agregarParada"/>
+    <Button text="Eliminar Parada" onAction="#eliminarParada"/>
+    <ListView fx:id="listViewParadas"/>
+</VBox>
