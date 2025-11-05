@@ -11,6 +11,7 @@ module com.example.proyectofinal244252 {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires javafx.graphics;
 
     opens application to javafx.fxml;
     opens controllers to javafx.fxml; // <-- agregar esto
