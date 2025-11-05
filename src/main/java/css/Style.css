@@ -1,0 +1,47 @@
+.parent { -fx-background-color: #2F3238; /* o black */ }
+.sidebar { -fx-background-color: #333333; }
+
+/* Sidebar "buttons" style: muestra una barra lateral azul al pasar el cursor.
+   No contiene reglas que cambien tamaño ni propiedades de iconos; tú te encargas de eso. */
+
+/* opción 1: reservar espacio (recomendado por simplicidad) */
+.buttons {
+    -fx-background-color: transparent;
+    -fx-padding: 10px 12px 10px 16px; /* left = 12 + 4px para la barra */
+    -fx-alignment: CENTER_LEFT;
+    -fx-border-style: solid;
+    -fx-border-color: transparent transparent transparent transparent;
+    -fx-border-width: 0 0 0 4px;
+    -fx-cursor: hand;
+}
+
+.buttons:hover {
+    -fx-border-color: transparent transparent transparent #00BCD4;
+    -fx-background-color: rgba(255,255,255,0.02);
+}
+
+/* Estado activo/seleccionado (opcional) */
+.buttons:selected,
+.buttons:focused,
+.buttons:pressed {
+    -fx-border-color: transparent transparent transparent #03A9F4;
+    -fx-background-color: rgba(3,169,244,0.08);
+}
+
+/* Color del texto dentro del contenedor */
+.buttons .label,
+.buttons .text {
+    -fx-text-fill: #B0BEC5; /* color gris claro por defecto */
+}
+
+/* Al pasar el cursor, el texto se vuelve más visible (no altera iconos) */
+.buttons:hover .label,
+.buttons:hover .text {
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Si necesitas un efecto de sombra en hover (opcional):
+.buttons:hover {
+  -fx-effect: dropshadow(gaussian, rgba(0,188,212,0.12), 6, 0.3, 0, 0);
+}
+*/
