@@ -3,13 +3,15 @@ package controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import models.Grafo;
 import models.Parada;
 
-public class CRUDController {
+public class CRUDParadaController {
 
     @FXML
     private TextField nombreParadaField;
+    //CREAR UNO PARA TIPO Y YA SI QUIERES OTRO PARA DESCRIPCION
 
     @FXML
     private ListView<String> listViewParadas;
@@ -28,21 +30,20 @@ public class CRUDController {
     }
 
     @FXML
-    private void eliminarParada() {
-        String selected = listViewParadas.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            Parada p = grafo.getMapa().keySet().stream()
-                    .filter(par -> par.getNombre().equals(selected))
-                    .findFirst().orElse(null);
-            if (p != null) {
-                grafo.eliminarParada(p);
-                actualizarLista();
-            }
-        }
-    }
-
     private void actualizarLista() {
         listViewParadas.getItems().clear();
         grafo.getMapa().keySet().forEach(par -> listViewParadas.getItems().add(par.getNombre()));
     }
+    @FXML
+    private void limpiarCampos() {
+        nombreParadaField.clear();
+    }
+
+    @FXML
+    private void salir() {
+        Stage stage = (Stage) nombreParadaField.getScene().getWindow();
+        stage.close();
+    }
+
 }
+

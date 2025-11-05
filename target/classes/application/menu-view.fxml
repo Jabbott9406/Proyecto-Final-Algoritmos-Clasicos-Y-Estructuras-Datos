@@ -14,13 +14,13 @@
                 <Menu mnemonicParsing="false" text="Registro">
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#RegistrarParadaClick" text="Registrar Parada" />
-                        <MenuItem mnemonicParsing="false" text="Registrar Ruta" />
+                        <MenuItem mnemonicParsing="false" onAction="#RegistrarRutaClick" text="Registrar Ruta" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Listados">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Listado Parada" />
-                        <MenuItem mnemonicParsing="false" text="Listado Ruta" />
+                    <MenuItem mnemonicParsing="false" onAction="#ListadoParadasClick" text="Listado Parada" />
+                        <MenuItem mnemonicParsing="false" onAction="#ListadoRutasClick" text="Listado Ruta" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Salir">
