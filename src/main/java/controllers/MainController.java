@@ -6,28 +6,31 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import models.Grafo;
 
-public class    MainController {
+public class MainController {
 
-    private Grafo grafo = new Grafo();
+    // Usamos el singleton de Grafo
+    private Grafo grafo = Grafo.getInstance();
 
     public Stage pantalla;
 
     @FXML
     private void abrirCRUDParada() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/registparada-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/RegistrarParada.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
             stage.setTitle("CRUD Parada");
             stage.setScene(scene);
-            controllers.CRUDParadaController controller = fxmlLoader.getController();
-            controller.setGrafo(grafo);
+
+            CRUDParadaController controller = fxmlLoader.getController();
+            controller.setGrafo(grafo);  // pasa la instancia singleton
 
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void abrirCRUDRuta() {
         try {
@@ -36,8 +39,9 @@ public class    MainController {
             Stage stage = new Stage();
             stage.setTitle("CRUD Ruta");
             stage.setScene(scene);
-            controllers.CRUDRutaController controller = fxmlLoader.getController();
-            controller.setGrafo(grafo);
+
+            CRUDRutaController controller = fxmlLoader.getController();
+            controller.setGrafo(grafo);  // pasa la instancia singleton
 
             stage.show();
         } catch (Exception e) {
@@ -47,14 +51,14 @@ public class    MainController {
 
     private void abrirListadoParadas() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/listadoparadas-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/listParada-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
             stage.setTitle("Listado de Paradas");
             stage.setScene(scene);
 
-            controllers.ListParadaController controller = fxmlLoader.getController();
-            controller.setGrafo(grafo);
+            ListParadaController controller = fxmlLoader.getController();
+            controller.setGrafo(grafo);  // pasa la instancia singleton
 
             stage.show();
         } catch (Exception e) {
@@ -71,7 +75,7 @@ public class    MainController {
             stage.setScene(scene);
 
             ListRutaController controller = fxmlLoader.getController();
-            controller.setGrafo(grafo);
+            controller.setGrafo(grafo);  // pasa la instancia singleton
 
             stage.show();
         } catch (Exception e) {

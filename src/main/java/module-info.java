@@ -14,7 +14,10 @@ module com.example.proyectofinal244252 {
     requires javafx.graphics;
 
     opens application to javafx.fxml;
-    opens controllers to javafx.fxml; // <-- agregar esto
+    opens controllers to javafx.fxml;
+    opens models to javafx.base, javafx.fxml;
+
+
 
     exports application;
     exports controllers; // opcional

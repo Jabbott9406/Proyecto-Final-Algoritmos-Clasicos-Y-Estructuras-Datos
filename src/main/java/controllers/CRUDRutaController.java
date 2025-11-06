@@ -1,11 +1,12 @@
 package controllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import models.Grafo;
 import models.Parada;
@@ -14,27 +15,36 @@ import models.Ruta;
 public class CRUDRutaController {
 
     @FXML
-    private TextField nombreField, distanciaField, tiempoField, costoField;
+    private TextField nombreField;
 
     @FXML
-    private ComboBox<Parada> inicioCombo, destinoCombo;
+    private TextField distanciaField;
+
+    @FXML
+    private TextField tiempoField;
+
+    @FXML
+    private TextField costoField;
+
+    @FXML
+    private ComboBox<Parada> inicioCombo;
+
+    @FXML
+    private ComboBox<Parada> destinoCombo;
 
     private Grafo grafo;
-
     private Ruta rutaEnEdicion = null;
-
     private ObservableList<Parada> listaParadas = FXCollections.observableArrayList();
+    private ListRutaController listRutaController;
 
     public void setGrafo(Grafo grafo) {
         this.grafo = grafo;
-
         if (grafo != null) {
-            listaParadas.setAll(grafo.getParadas());
-            inicioCombo.setItems(listaParadas);
-            destinoCombo.setItems(listaParadas);
+            this.listaParadas.setAll(grafo.getParadas());
+            this.inicioCombo.setItems(this.listaParadas);
+            this.destinoCombo.setItems(this.listaParadas);
         }
     }
-    private ListRutaController listRutaController;
 
     public void setListRutaController(ListRutaController controller) {
         this.listRutaController = controller;
@@ -43,7 +53,7 @@ public class CRUDRutaController {
     @FXML
     private void registrarRuta() {
         try {
-            String nombre = nombreField.getText();
+            String nombre = nombreField.getText().trim();
             Parada inicio = inicioCombo.getValue();
             Parada destino = destinoCombo.getValue();
             double distancia = Double.parseDouble(distanciaField.getText());
@@ -62,7 +72,6 @@ public class CRUDRutaController {
                 rutaEnEdicion.setDistancia(distancia);
                 rutaEnEdicion.setTiempo(tiempo);
                 rutaEnEdicion.setCosto(costo);
-
                 mostrarAlerta("Éxito", "Ruta modificada correctamente.");
 
                 if (listRutaController != null) {
@@ -71,7 +80,6 @@ public class CRUDRutaController {
                         listRutaController.getListaRutas().set(index, rutaEnEdicion);
                     }
                 }
-
             } else {
                 Ruta nuevaRuta = grafo.agregarRuta(nombre, inicio, destino, distancia, tiempo, costo);
                 mostrarAlerta("Éxito", "Ruta registrada correctamente:\n" + nuevaRuta);
@@ -82,15 +90,12 @@ public class CRUDRutaController {
             }
 
             limpiarCampos();
-            rutaEnEdicion = null;
-
         } catch (NumberFormatException e) {
             mostrarAlerta("Error", "Distancia, tiempo y costo deben ser numéricos.");
         } catch (Exception e) {
             mostrarAlerta("Error", "Ocurrió un problema:\n" + e.getMessage());
         }
     }
-
 
     @FXML
     private void limpiarCampos() {
@@ -100,7 +105,6 @@ public class CRUDRutaController {
         distanciaField.clear();
         tiempoField.clear();
         costoField.clear();
-
         rutaEnEdicion = null;
     }
 
@@ -110,9 +114,8 @@ public class CRUDRutaController {
         stage.close();
     }
 
-
     public static void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
@@ -128,9 +131,6 @@ public class CRUDRutaController {
             distanciaField.setText(String.valueOf(ruta.getDistancia()));
             tiempoField.setText(String.valueOf(ruta.getTiempo()));
             costoField.setText(String.valueOf(ruta.getCosto()));
-
         }
     }
-
 }
-

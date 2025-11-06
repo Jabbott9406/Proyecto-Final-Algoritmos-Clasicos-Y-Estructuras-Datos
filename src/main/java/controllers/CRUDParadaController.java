@@ -1,9 +1,9 @@
-
 package controllers;
 
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import models.Grafo;
 import models.Parada;
@@ -12,21 +12,33 @@ public class CRUDParadaController {
 
     @FXML
     private TextField nombreParadaField;
-    //CREAR UNO PARA TIPO Y YA SI QUIERES OTRO PARA DESCRIPCION
+
+    @FXML
+    private ComboBox<String> tipoParadaBox;
 
     @FXML
     private ListView<String> listViewParadas;
 
-    private Grafo grafo = new Grafo();
+    private Grafo grafo = Grafo.getInstance();
 
     @FXML
-    private void agregarParada() {
+    public void initialize() {
+        // Inicializa el ComboBox
+        tipoParadaBox.setItems(FXCollections.observableArrayList("Tren", "Metro", "Autobus"));
+        actualizarLista();
+    }
+
+    @FXML
+    private void agregarParada(ActionEvent event) {
         String nombre = nombreParadaField.getText().trim();
-        if (!nombre.isEmpty()) {
-            Parada nueva = new Parada(nombre);
+        String tipo = tipoParadaBox.getValue();
+
+        if (!nombre.isEmpty() && tipo != null) {
+            Parada nueva = new Parada(nombre, tipo);
             grafo.agregarParada(nueva);
             actualizarLista();
-            nombreParadaField.clear();
+            limpiarCampos();
+            mostrarAlerta("Éxito", "Parada agregada correctamente.");
         }
     }
 
@@ -35,9 +47,11 @@ public class CRUDParadaController {
         listViewParadas.getItems().clear();
         grafo.getMapa().keySet().forEach(par -> listViewParadas.getItems().add(par.getNombre()));
     }
+
     @FXML
     private void limpiarCampos() {
         nombreParadaField.clear();
+        tipoParadaBox.getSelectionModel().clearSelection();
     }
 
     @FXML
@@ -48,6 +62,14 @@ public class CRUDParadaController {
 
     public void setGrafo(Grafo grafo) {
         this.grafo = grafo;
+        actualizarLista();
     }
 
+    public static void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
 }

@@ -1,10 +1,20 @@
-.parent { -fx-background-color: #2F3238; /* o black */ }
+.parent { -fx-background-color: #2F3238; }
 .sidebar { -fx-background-color: #333333; }
+.DarkBlue { -fx-background-color: #0b5ea8; }
 
-/* Sidebar "buttons" style: muestra una barra lateral azul al pasar el cursor.
-   No contiene reglas que cambien tamaño ni propiedades de iconos; tú te encargas de eso. */
+.dark-blue-header {
+    -fx-background-color: #0b5ea8;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 10 20;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 6, 0.5, 0, 2);
+}
 
-/* opción 1: reservar espacio (recomendado por simplicidad) */
+/* Sidebar "buttons" style: muestra una barra lateral azul al pasar el cursor. */
 .buttons {
     -fx-background-color: transparent;
     -fx-padding: 10px 12px 10px 16px; /* left = 12 + 4px para la barra */
@@ -20,7 +30,6 @@
     -fx-background-color: rgba(255,255,255,0.02);
 }
 
-/* Estado activo/seleccionado (opcional) */
 .buttons:selected,
 .buttons:focused,
 .buttons:pressed {
@@ -28,13 +37,11 @@
     -fx-background-color: rgba(3,169,244,0.08);
 }
 
-/* Color del texto dentro del contenedor */
 .buttons .label,
 .buttons .text {
-    -fx-text-fill: #B0BEC5; /* color gris claro por defecto */
+    -fx-text-fill: #B0BEC5;
 }
 
-/* Al pasar el cursor, el texto se vuelve más visible (no altera iconos) */
 .buttons:hover .label,
 .buttons:hover .text {
     -fx-text-fill: #FFFFFF;
@@ -45,3 +52,22 @@
   -fx-effect: dropshadow(gaussian, rgba(0,188,212,0.12), 6, 0.3, 0, 0);
 }
 */
+
+/* --------- TableView: asegurar textos visibles --------- */
+.table-view .column-header .label {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-font-size: 14px;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: black;
+    -fx-font-size: 13px;
+}
+
+.table-view .table-row-cell:filled:selected,
+.table-view:focused .table-row-cell:filled:selected {
+    -fx-background-color: #0b86c5;
+    -fx-text-fill: white;
+}

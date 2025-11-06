@@ -6,12 +6,22 @@ import java.util.List;
 public class Parada {
 
     private String nombre;
+    private String tipo;
     private List<Ruta> rutasDeEntrada;
 
-    public Parada(String nombre) {
+    public Parada(String nombre, String tipo) {
         if(nombre == null || nombre.isBlank()) throw new IllegalArgumentException("Nombre no puede ser null/estar vacio");
         this.nombre = nombre;
         this.rutasDeEntrada = new ArrayList<>();
+        this.tipo = "";
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public String getNombre() { return nombre;}
