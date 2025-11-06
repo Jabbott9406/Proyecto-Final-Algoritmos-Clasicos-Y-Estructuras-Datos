@@ -4,9 +4,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import util.Paths;
+import models.Grafo;
 
 public class MainController {
+
+    // Usamos el singleton de Grafo
+    private Grafo grafo = Grafo.getInstance();
+
+    public Stage pantalla;
 
     @FXML
     private void abrirCRUDParada() {
@@ -14,14 +19,19 @@ public class MainController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/RegistrarParada.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
-            stage.setTitle("CRUD Grafo");
+            stage.setTitle("CRUD Parada");
             stage.setScene(scene);
+
+            CRUDParadaController controller = fxmlLoader.getController();
+            controller.setGrafo(grafo);  // pasa la instancia singleton
+
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    @FXML
     private void abrirCRUDRuta() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/registruta-view.fxml"));
@@ -29,6 +39,10 @@ public class MainController {
             Stage stage = new Stage();
             stage.setTitle("CRUD Ruta");
             stage.setScene(scene);
+
+            CRUDRutaController controller = fxmlLoader.getController();
+            controller.setGrafo(grafo);  // pasa la instancia singleton
+
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,6 +56,10 @@ public class MainController {
             Stage stage = new Stage();
             stage.setTitle("Listado de Paradas");
             stage.setScene(scene);
+
+            ListParadaController controller = fxmlLoader.getController();
+            controller.setGrafo(grafo);  // pasa la instancia singleton
+
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,37 +68,42 @@ public class MainController {
 
     private void abrirListadoRutas() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/listadorutas-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/listRuta-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
             stage.setTitle("Listado de Rutas");
             stage.setScene(scene);
+
+            ListRutaController controller = fxmlLoader.getController();
+            controller.setGrafo(grafo);  // pasa la instancia singleton
+
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
-    public  Stage pantalla;
-
     public void RegistrarParadaClick() {
         abrirCRUDParada();
     }
 
-    public void RegistrarRutaClick(){
+    public void RegistrarRutaClick() {
         abrirCRUDRuta();
     }
-    public  void ListadoParadasClick() {
+
+    public void ListadoParadasClick() {
         abrirListadoParadas();
     }
 
     public void ListadoRutasClick() {
-       abrirListadoRutas();
+        abrirListadoRutas();
     }
+
     @FXML
     private void salir() {
-      pantalla.close();
+        if (pantalla != null) {
+            pantalla.close();
+        }
     }
 
     public void CerrarAplicacionClick() {

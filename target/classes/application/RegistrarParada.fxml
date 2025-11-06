@@ -3,63 +3,48 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
 
-<AnchorPane prefHeight="466.0" prefWidth="702.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CRUDParadaController">
-    <children>
-        <VBox layoutX="6.0" layoutY="14.0" prefHeight="59.0" prefWidth="690.0" styleClass="dark-blue-header" stylesheets="@../css/Style.css">
-            <children>
-                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="56.0" prefWidth="649.0" text="Registrar Nueva Parada" textAlignment="CENTER" textFill="WHITE">
-                    <font>
-                        <Font name="Segoe UI" size="45.0" />
-                    </font>
-                </Label>
-            </children>
-        </VBox>
-        <ImageView fitHeight="223.0" fitWidth="198.0" layoutX="24.0" layoutY="115.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../images/Logo.png" />
-            </image>
-        </ImageView>
-        <Label layoutX="233.0" layoutY="124.0" text="Nombre de Parada: " textFill="WHITE">
-            <font>
-                <Font name="Segoe UI" size="23.0" />
-            </font>
-        </Label>
-        <TextField fx:id="nombreParadaField" layoutX="233.0" layoutY="166.0" prefHeight="26.0" prefWidth="294.0" promptText="EJ: 30 de marzo" />
-        <Label layoutX="233.0" layoutY="214.0" text="Tipo de Parada: " textFill="WHITE">
-            <font>
-                <Font name="Segoe UI" size="23.0" />
-            </font>
-        </Label>
+<AnchorPane prefHeight="500.0" prefWidth="700.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CRUDParadaController">
 
-        <!-- ComboBox con ítems definidos en FXML -->
-        <ComboBox fx:id="tipoParadaBox" layoutX="233.0" layoutY="269.0" prefHeight="26.0" prefWidth="294.0" promptText="Seleccione una parada">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Casa" />
-                    <String fx:value="AZUL" />
-                    <!-- Agrega más opciones aquí si lo necesitas -->
-                </FXCollections>
-            </items>
-        </ComboBox>
+    <VBox layoutX="0" layoutY="0" prefHeight="80.0" prefWidth="700.0" styleClass="dark-blue-header" stylesheets="@../css/Style.css">
+        <children>
+            <Label alignment="CENTER" prefHeight="80.0" prefWidth="700.0" text="Registrar Nueva Parada" textAlignment="CENTER" textFill="WHITE">
+                <font>
+                    <Font name="Segoe UI" size="36.0" />
+                </font>
+            </Label>
+        </children>
+    </VBox>
 
-        <Button fx:id="btnRegistro" layoutX="233.0" layoutY="335.0" mnemonicParsing="false" onAction="#agregarParada" prefHeight="34.0" prefWidth="130.0" styleClass="DarkBlue" stylesheets="@../css/Style.css" text="Registrar" textFill="WHITE">
-            <font>
-                <Font name="Segoe UI Bold" size="17.0" />
-            </font>
-        </Button>
-        <Button fx:id="btnCancelar" layoutX="403.0" layoutY="335.0" mnemonicParsing="false" onAction="#salir" prefHeight="34.0" prefWidth="130.0" stylesheets="@../css/Style.css" text="Cancelar">
-            <font>
-                <Font name="Segoe UI" size="17.0" />
-            </font>
-        </Button>
-    </children>
+    <ImageView fitHeight="200.0" fitWidth="180.0" layoutX="20.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+        <image>
+            <Image url="@../images/Logo.png" />
+        </image>
+    </ImageView>
+
+    <Label layoutX="220.0" layoutY="110.0" text="Nombre de Parada:" textFill="WHITE">
+        <font><Font name="Segoe UI" size="20.0" /></font>
+    </Label>
+    <TextField fx:id="nombreParadaField" layoutX="220.0" layoutY="145.0" prefWidth="300.0" promptText="EJ: 30 de marzo" />
+
+    <Label layoutX="220.0" layoutY="190.0" text="Tipo de Parada:" textFill="WHITE">
+        <font><Font name="Segoe UI" size="20.0" /></font>
+    </Label>
+    <ComboBox fx:id="tipoParadaBox" layoutX="220.0" layoutY="225.0" prefWidth="300.0" promptText="Seleccione tipo" />
+
+    <Button fx:id="btnRegistro" layoutX="223.0" layoutY="280.0" onAction="#agregarParada" prefHeight="35.0" prefWidth="130.0" styleClass="DarkBlue" text="Agregar" textFill="WHITE">
+        <font><Font name="Segoe UI Bold" size="16.0" /></font>
+    </Button>
+
+    <Button fx:id="btnCancelar" layoutX="400.0" layoutY="280.0" onAction="#salir" prefHeight="35.0" prefWidth="130.0" text="Cancelar" />
+
+    <ListView fx:id="listViewParadas" layoutX="220.0" layoutY="330.0" prefWidth="300.0" prefHeight="120.0" />
+
 </AnchorPane>

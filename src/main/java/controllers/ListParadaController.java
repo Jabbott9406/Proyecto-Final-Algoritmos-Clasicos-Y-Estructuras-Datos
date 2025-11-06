@@ -1,5 +1,7 @@
 package controllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -11,6 +13,14 @@ import java.util.Optional;
 
 public class ListParadaController {
 
+    @FXML
+    private TableView<Parada> tableParadas;
+
+    @FXML
+    private TableColumn<Parada, String> nombreColumn;
+
+    @FXML
+    private TableColumn<Parada, String> tipoColumn;
 
     @FXML
     private Button btnEliminar;
@@ -18,44 +28,46 @@ public class ListParadaController {
     @FXML
     private Button btnModificar;
 
-    @FXML
-    private TableColumn<Parada, String> colNombre;
+    private Grafo grafo = Grafo.getInstance();
+    private ObservableList<Parada> listaParadas = FXCollections.observableArrayList();
 
     @FXML
-    private TableColumn<Parada, String> colTipo;
+    public void setGrafo(Grafo grafo) {
+        this.grafo = grafo;
+        if (grafo != null) {
+            listaParadas.setAll(grafo.getParadas());
+            tableParadas.setItems(listaParadas);
+        }
+    }
 
-    @FXML
-    private TableView<Parada> tblParadas;
-
-    private final Grafo grafo = Grafo.getInstance();
-
-
+    public ObservableList<Parada> getListaParadas() {
+        return listaParadas;
+    }
 
     @FXML
     void eliminarParada(ActionEvent event) {
-        Parada seleccionado = tblParadas.getSelectionModel().getSelectedItem();
+        Parada seleccionado = tableParadas.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
             new Alert(Alert.AlertType.INFORMATION, "Selecciona una parada.").showAndWait();
             return;
         }
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Eliminar la parada \"" + seleccionado.getNombre() + "\"?", ButtonType.OK, ButtonType.CANCEL);
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "¿Eliminar la parada \"" + seleccionado.getNombre() + "\"?",
+                ButtonType.OK, ButtonType.CANCEL);
         confirm.setHeaderText(null);
         Optional<ButtonType> res = confirm.showAndWait();
         if (res.isPresent() && res.get() == ButtonType.OK) {
-            // elimina del modelo
             grafo.eliminarParada(seleccionado);
-            // asegúrate de quitarla de la lista observable (por si tu Grafo no lo hace)
-            grafo.getParadas().remove(seleccionado);
-            // refresca la tabla
-            tblParadas.getSelectionModel().clearSelection();
-            tblParadas.refresh();
+            listaParadas.remove(seleccionado);
+            tableParadas.getSelectionModel().clearSelection();
+            tableParadas.refresh();
         }
     }
 
     @FXML
     void modificarParada(ActionEvent event) {
-        Parada seleccionado = tblParadas.getSelectionModel().getSelectedItem();
+        Parada seleccionado = tableParadas.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
             new Alert(Alert.AlertType.INFORMATION, "Selecciona una parada.").showAndWait();
             return;
@@ -70,33 +82,25 @@ public class ListParadaController {
         String n = nuevoNombre.get().trim();
         if (n.isEmpty()) return;
 
-
-
         TextInputDialog dTipo = new TextInputDialog(seleccionado.getTipo());
         dTipo.setTitle("Modificar Parada");
         dTipo.setHeaderText("Editar tipo");
         dTipo.setContentText("Tipo:");
         String t = dTipo.showAndWait().orElse(seleccionado.getTipo());
 
-        grafo.modificarParada(seleccionado, n);
+        seleccionado.setNombre(n);
+        seleccionado.setTipo(t);
 
-        tblParadas.refresh();
+        tableParadas.refresh();
     }
 
     @FXML
     void initialize() {
         System.out.println("ListParadaController.initialize() - paradas.size = " + grafo.getParadas().size());
+        listaParadas.setAll(grafo.getParadas());
+        tableParadas.setItems(listaParadas);
 
-        // enlaza la lista observable del grafo al TableView
-        tblParadas.setItems(grafo.getParadas());
-
-        // configuramos las columnas usando los getters getNombre() y getTipo() de Parada
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-
-
+        nombreColumn.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        tipoColumn.setCellValueFactory(new PropertyValueFactory<>("tipo"));
     }
 }
-
-
-

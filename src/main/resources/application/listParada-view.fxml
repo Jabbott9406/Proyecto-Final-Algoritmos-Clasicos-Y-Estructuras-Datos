@@ -8,33 +8,32 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="517.0" prefWidth="917.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ListParadaController">
-   <children>
-      <TableView fx:id="tblParadas" layoutX="15.0" layoutY="124.0" prefHeight="310.0" prefWidth="870.0" stylesheets="@../css/Style.css">
-        <columns>
-          <TableColumn fx:id="colNombre" prefWidth="452.7999515533447" text="Nombre" />
-          <TableColumn fx:id="colTipo" minWidth="0.0" prefWidth="416.79999389648435" text="Tipo" />
-        </columns>
-      </TableView>
-      <VBox layoutX="16.0" layoutY="25.0" prefHeight="74.0" prefWidth="870.0" styleClass="dark-blue-header" stylesheets="@../css/Style.css">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="54.0" prefWidth="830.0" text="Lista de Paradas" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI" size="42.0" />
-               </font>
-            </Label>
-         </children>
-      </VBox>
-      <Button fx:id="btnEliminar" layoutX="786.0" layoutY="458.0" mnemonicParsing="false" onAction="#eliminarParada" prefHeight="26.0" prefWidth="98.0" text="Eliminar">
-         <font>
-            <Font name="Segoe UI" size="15.0" />
-         </font>
-      </Button>
-      <Button fx:id="btnModificar" layoutX="673.0" layoutY="457.0" mnemonicParsing="false" onAction="#modificarParada" prefHeight="26.0" prefWidth="97.0" styleClass="DarkBlue" stylesheets="@../css/Style.css" text="Modificar" textFill="WHITE">
-         <font>
-            <Font name="Segoe UI" size="16.0" />
-         </font>
-      </Button>
-   </children>
+    <children>
+        <TableView fx:id="tableParadas" layoutX="15.0" layoutY="124.0" prefHeight="310.0" prefWidth="870.0" stylesheets="@../css/Style.css">
+            <columns>
+                <TableColumn fx:id="nombreColumn" prefWidth="452.7999515533447" text="Nombre" />
+                <TableColumn fx:id="tipoColumn" minWidth="0.0" prefWidth="416.79999389648435" text="Tipo" />
+            </columns>
+        </TableView>
+        <VBox layoutX="16.0" layoutY="25.0" prefHeight="74.0" prefWidth="870.0" styleClass="dark-blue-header" stylesheets="@../css/Style.css">
+            <children>
+                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="54.0" prefWidth="830.0" text="Lista de Paradas" textAlignment="CENTER" textFill="WHITE">
+                    <font>
+                        <Font name="Segoe UI" size="42.0" />
+                    </font>
+                </Label>
+            </children>
+        </VBox>
+        <Button fx:id="btnEliminar" layoutX="786.0" layoutY="458.0" mnemonicParsing="false" onAction="#eliminarParada" prefHeight="26.0" prefWidth="98.0" text="Eliminar">
+            <font>
+                <Font name="Segoe UI" size="15.0" />
+            </font>
+        </Button>
+        <Button fx:id="btnModificar" layoutX="673.0" layoutY="457.0" mnemonicParsing="false" onAction="#modificarParada" prefHeight="26.0" prefWidth="97.0" styleClass="DarkBlue" stylesheets="@../css/Style.css" text="Modificar" textFill="WHITE">
+            <font>
+                <Font name="Segoe UI" size="16.0" />
+            </font>
+        </Button>
+    </children>
 </AnchorPane>

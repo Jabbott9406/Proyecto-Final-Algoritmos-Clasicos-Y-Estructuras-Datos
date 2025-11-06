@@ -9,11 +9,6 @@ import models.Grafo;
 import models.Parada;
 
 public class CRUDParadaController {
-    @FXML
-    private Button btnCancelar;
-
-    @FXML
-    private Button btnRegistro;
 
     @FXML
     private TextField nombreParadaField;
@@ -21,29 +16,43 @@ public class CRUDParadaController {
     @FXML
     private ComboBox<String> tipoParadaBox;
 
+    @FXML
+    private ListView<String> listViewParadas;
+
     private Grafo grafo = Grafo.getInstance();
-    private ListView<Parada> listViewParadas;
 
     @FXML
-    public ComboBox<String> getTipoParadaBox() {
-
+    public void initialize() {
+        // Inicializa el ComboBox
         tipoParadaBox.setItems(FXCollections.observableArrayList("Tren", "Metro", "Autobus"));
-        return tipoParadaBox;
+        actualizarLista();
     }
 
     @FXML
     private void agregarParada(ActionEvent event) {
         String nombre = nombreParadaField.getText().trim();
-        Parada aux = new Parada(nombre, tipoParadaBox.getValue());
-        if (!nombre.isEmpty()) {
-            grafo.agregarParada(aux);
-           // actualizarLista();
-            nombreParadaField.clear();
-            tipoParadaBox.getItems().clear();
+        String tipo = tipoParadaBox.getValue();
+
+        if (!nombre.isEmpty() && tipo != null) {
+            Parada nueva = new Parada(nombre, tipo);
+            grafo.agregarParada(nueva);
+            actualizarLista();
+            limpiarCampos();
+            mostrarAlerta("Éxito", "Parada agregada correctamente.");
         }
     }
 
+    @FXML
+    private void actualizarLista() {
+        listViewParadas.getItems().clear();
+        grafo.getMapa().keySet().forEach(par -> listViewParadas.getItems().add(par.getNombre()));
+    }
 
+    @FXML
+    private void limpiarCampos() {
+        nombreParadaField.clear();
+        tipoParadaBox.getSelectionModel().clearSelection();
+    }
 
     @FXML
     private void salir() {
@@ -51,56 +60,16 @@ public class CRUDParadaController {
         stage.close();
     }
 
-//    @FXML
-//    private void initialize() {
-//        listViewParadas.setItems(grafo.getParadas());
-//
-//        // Muestra solo el nombre en cada celda (si Parada tiene getNombre())
-//        listViewParadas.setCellFactory(lv -> new ListCell<>() {
-//            @Override
-//            protected void updateItem(Parada p, boolean empty) {
-//                super.updateItem(p, empty);
-//                setText(empty || p == null ? null : p.getNombre());
-//            }
-//        });
-//    }
+    public void setGrafo(Grafo grafo) {
+        this.grafo = grafo;
+        actualizarLista();
+    }
 
-
-//    @FXML
-//    private TextField nombreParadaField;
-//    //CREAR UNO PARA TIPO Y YA SI QUIERES OTRO PARA DESCRIPCION
-//
-//    @FXML
-//    private ListView<String> listViewParadas;
-//
-//    private Grafo grafo = new Grafo();
-//
-//    @FXML
-//    private void agregarParada() {
-//        String nombre = nombreParadaField.getText().trim();
-//        if (!nombre.isEmpty()) {
-//            Parada nueva = new Parada(nombre);
-//            grafo.agregarParada(nueva);
-//            actualizarLista();
-//            nombreParadaField.clear();
-//        }
-//    }
-//
-//    @FXML
-//    private void actualizarLista() {
-//        listViewParadas.getItems().clear();
-//        grafo.getMapa().keySet().forEach(par -> listViewParadas.getItems().add(par.getNombre()));
-//    }
-//    @FXML
-//    private void limpiarCampos() {
-//        nombreParadaField.clear();
-//    }
-//
-//    @FXML
-//    private void salir() {
-//        Stage stage = (Stage) nombreParadaField.getScene().getWindow();
-//        stage.close();
-//    }
-
+    public static void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
 }
-
