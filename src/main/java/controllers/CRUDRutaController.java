@@ -25,7 +25,7 @@ public class CRUDRutaController {
     @FXML
     private TextField costoField;
 
-    private Grafo grafo = new Grafo();
+    //private Grafo grafo = new Grafo();
 
     @FXML
     private void limpiarCampos() {
