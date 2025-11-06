@@ -1,5 +1,8 @@
 package models;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,9 +12,22 @@ import java.util.Random;
 public class Grafo {
 
     Map<Parada, List<Ruta>> mapa;
+    private final ObservableList<Parada> paradas;
 
-    public Grafo() {
+    private static final Grafo INSTANCE = new Grafo();
+
+    private Grafo() {
         mapa = new HashMap<>();
+        paradas = FXCollections.observableArrayList();
+
+    }
+
+    public static Grafo getInstance() {
+        return INSTANCE;
+    }
+
+    public ObservableList<Parada> getParadas() {
+        return paradas;
     }
 
     public Map<Parada, List<Ruta>> getMapa() {
@@ -26,8 +42,12 @@ public class Grafo {
      */
     public void agregarParada(Parada parada) {
         if (parada == null) throw new IllegalArgumentException("Parada no puede ser null");
-        mapa.putIfAbsent(parada, new ArrayList<>()); // Se crea la parada y la inicialización de un listado de rutas
+        if (!mapa.containsKey(parada)) {
+            mapa.put(parada, new ArrayList<>());   // primero en el mapa
+            paradas.add(parada);                    // luego en la lista observable
+        }// Se crea la parada y la inicialización de un listado de rutas
         // dependientes a ella.
+
     }
     //Validar duplicados
 
@@ -71,6 +91,8 @@ public class Grafo {
             }
         }
         mapa.remove(parada); // Se elimina la parada del HashMap.
+        getParadas().remove(parada);
+
 
     }
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -10,22 +9,21 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="605.0" prefWidth="859.0" styleClass="parent" stylesheets="@../../java/css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Menu2Controller">
+<AnchorPane prefHeight="605.0" prefWidth="859.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Menu2Controller">
    <children>
       <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="80.0" styleClass="sidebar">
          <children>
             <ImageView fitHeight="89.0" fitWidth="79.0" pickOnBounds="true" smooth="false" styleClass="parent">
                <image>
-                  <Image url="@../../java/images/omega.jpg" />
+                  <Image url="@../images/omega.jpg" />
                </image>
             </ImageView>
             <HBox alignment="CENTER" onMouseClicked="#abrirCRUDParada" prefHeight="70.0" prefWidth="80.0" styleClass="buttons">
                <children>
                   <FontAwesomeIconView glyphName="HOME" glyphStyle="-fx-fill:grey" size="1.5em" />
-                  <Button mnemonicParsing="false" onAction="#abrirCRUDParada" prefHeight="50.0" prefWidth="62.0" text="Button" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" layoutX="10.0" layoutY="100.0" prefHeight="70.0" prefWidth="80.0" styleClass="buttons">
+            <HBox accessibleRole="BUTTON" alignment="CENTER" layoutX="10.0" layoutY="100.0" prefHeight="70.0" prefWidth="80.0" styleClass="buttons">
                <children>
                   <FontAwesomeIconView glyphName="BUS" glyphStyle="-fx-fill:grey" size="1.5em" />
                </children>

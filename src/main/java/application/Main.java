@@ -4,7 +4,9 @@ import controllers.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import util.Paths;
 
 import java.awt.*;
 
@@ -12,6 +14,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/menu-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         MainController mainController = (MainController) fxmlLoader.getController();

@@ -4,13 +4,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import util.Paths;
 
 public class MainController {
 
     @FXML
     private void abrirCRUDParada() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/registparada-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/RegistrarParada.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
             stage.setTitle("CRUD Grafo");
@@ -36,7 +37,7 @@ public class MainController {
 
     private void abrirListadoParadas() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/listadoparadas-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/listParada-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
             stage.setTitle("Listado de Paradas");

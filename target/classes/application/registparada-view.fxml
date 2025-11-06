@@ -9,10 +9,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controllers.CRUDParadaController"
-            prefHeight="521.0" prefWidth="687.0">
+<AnchorPane prefHeight="521.0" prefWidth="687.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CRUDParadaController">
 
     <opaqueInsets>
         <Insets />
@@ -33,32 +30,24 @@
             </font>
         </Label>
 
-        <TextField fx:id="nombreParadaField" layoutX="241.0" layoutY="135.0"
-                   prefHeight="26.0" prefWidth="126.0"
-                   promptText="Introduzca el nombre... ">
+        <TextField fx:id="nombreParadaField" layoutX="241.0" layoutY="135.0" prefHeight="26.0" prefWidth="126.0" promptText="Introduzca el nombre... ">
             <font>
                 <Font size="10.0" />
             </font>
         </TextField>
 
-        <Button layoutX="138.0" layoutY="307.0" mnemonicParsing="false"
-                onAction="#agregarParada" text="Agregar Parada" />
+        <Button layoutX="138.0" layoutY="307.0" mnemonicParsing="false" onAction="#agregarParada" text="Agregar Parada" />
 
-        <Label layoutX="145.0" layoutY="176.0" prefHeight="27.0" prefWidth="85.0"
-               text="Tipo : " textAlignment="CENTER">
+        <Label layoutX="145.0" layoutY="176.0" prefHeight="27.0" prefWidth="85.0" text="Tipo : " textAlignment="CENTER">
             <font>
                 <Font name="System Bold" size="18.0" />
             </font>
         </Label>
 
-        <ComboBox layoutX="241.0" layoutY="176.0"
-                  prefHeight="26.0" prefWidth="126.0" />
+        <ComboBox layoutX="241.0" layoutY="176.0" prefHeight="26.0" prefWidth="126.0" />
 
-        <Button layoutX="574.0" layoutY="481.0" mnemonicParsing="false"
-                onAction="#salir" prefHeight="26.0" prefWidth="98.0" text="Salir" />
+        <Button layoutX="574.0" layoutY="481.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="98.0" text="Salir" />
 
-        <Button layoutX="253.0" layoutY="306.0" mnemonicParsing="false"
-                prefHeight="26.0" prefWidth="102.0"
-                text="Limpiar Campos" onAction="#limpiarCampos" />
+        <Button layoutX="253.0" layoutY="306.0" mnemonicParsing="false" onAction="#limpiarCampos" prefHeight="26.0" prefWidth="102.0" text="Limpiar Campos" />
     </children>
 </AnchorPane>
