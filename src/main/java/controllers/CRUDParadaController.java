@@ -1,3 +1,4 @@
+
 package controllers;
 
 import javafx.fxml.FXML;
@@ -45,5 +46,8 @@ public class CRUDParadaController {
         stage.close();
     }
 
-}
+    public void setGrafo(Grafo grafo) {
+        this.grafo = grafo;
+    }
 
+}

@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.ListParadaController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="402.0" prefWidth="608.0"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ListRutaController">
+    <children>
+        <TableView fx:id="tableRutas" layoutY="1.0" prefHeight="402.0" prefWidth="608.0">
+            <columns>
+                <TableColumn fx:id="nombreColumn" prefWidth="75.0" text="Nombre" />
+                <TableColumn fx:id="inicioColumn" prefWidth="75.0" text="Inicio" />
+                <TableColumn fx:id="destinoColumn" prefWidth="75.0" text="Destino" />
+                <TableColumn fx:id="distanciaColumn" prefWidth="75.0" text="Distancia" />
+                <TableColumn fx:id="tiempoColumn" prefWidth="75.0" text="Tiempo" />
+                <TableColumn fx:id="costoColumn" prefWidth="75.0" text="Costo" />
+            </columns>
+        </TableView>
+    </children>
 </AnchorPane>

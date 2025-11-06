@@ -215,9 +215,28 @@ public class Grafo {
 
         return mapa.get(parada);
     }
+    /**
+     * Nombre: getParadas
+     * Parámetros: ninguno
+     * Funcionamiento: devuelve una lista con todas las paradas registradas en el grafo.
+     * Retorno: List<Parada>
+     */
+    public List<Parada> getParadas() {
+        return new ArrayList<>(mapa.keySet());
+    }
+    /**
+     * Nombre: getRutas
+     * Parámetros: ninguno
+     * Funcionamiento: devuelve una lista con todas las rutas registradas en el grafo.
+     * Retorno: List<Ruta>
+     */
+    public List<Ruta> getRutas() {
+        List<Ruta> todasRutas = new ArrayList<>();
+        for (List<Ruta> rutas : mapa.values()) {
+            todasRutas.addAll(rutas);
+        }
+        return todasRutas;
+    }
+
 
 }
-
-
-
-
