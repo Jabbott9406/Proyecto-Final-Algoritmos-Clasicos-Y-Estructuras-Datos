@@ -1,23 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="402.0" prefWidth="608.0"
-            xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controllers.ListRutaController">
+<AnchorPane prefHeight="517.0" prefWidth="917.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ListRutaController">
     <children>
-        <TableView fx:id="tableRutas" layoutY="1.0" prefHeight="402.0" prefWidth="608.0">
+        <TableView fx:id="tableRutas" layoutX="15.0" layoutY="124.0" prefHeight="310.0" prefWidth="884.0" stylesheets="@../css/Style.css">
             <columns>
-                <TableColumn fx:id="nombreColumn" prefWidth="75.0" text="Nombre" />
-                <TableColumn fx:id="inicioColumn" prefWidth="75.0" text="Inicio" />
-                <TableColumn fx:id="destinoColumn" prefWidth="75.0" text="Destino" />
-                <TableColumn fx:id="distanciaColumn" prefWidth="75.0" text="Distancia" />
-                <TableColumn fx:id="tiempoColumn" prefWidth="75.0" text="Tiempo" />
-                <TableColumn fx:id="costoColumn" prefWidth="75.0" text="Costo" />
+                <TableColumn fx:id="nombreColumn" prefWidth="145.0" text="Nombre" />
+                <TableColumn fx:id="inicioColumn" prefWidth="145.0" text="Inicio" />
+                <TableColumn fx:id="destinoColumn" prefWidth="145.0" text="Destino" />
+                <TableColumn fx:id="distanciaColumn" prefWidth="145.0" text="Distancia" />
+                <TableColumn fx:id="tiempoColumn" prefWidth="145.0" text="Tiempo" />
+                <TableColumn fx:id="costoColumn" prefWidth="145.0" text="Costo" />
             </columns>
         </TableView>
+
+        <VBox layoutX="16.0" layoutY="25.0" prefHeight="74.0" prefWidth="870.0" styleClass="dark-blue-header" stylesheets="@../css/Style.css">
+            <children>
+            <Label prefHeight="74.0" prefWidth="914.0" style="-fx-background-color: #0b5ea8; -fx-background-radius: 10; -fx-border-radius: 10; -fx-text-fill: white;" text="                 Lista de Rutas">
+               <font>
+                  <Font name="Segoe UI" size="56.0" />
+               </font>
+            </Label>
+            </children>
+        </VBox>
+
+        <Button fx:id="btnModificar" layoutX="673.0" layoutY="457.0" mnemonicParsing="false" onAction="#modificarRutaSeleccionada" prefHeight="26.0" prefWidth="97.0" style="-fx-background-color: #0b5ea8;" styleClass="DarkBlue" stylesheets="@../css/Style.css" text="Modificar" textFill="WHITE">
+            <font>
+                <Font name="Segoe UI" size="16.0" />
+            </font>
+        </Button>
+
+        <Button fx:id="btnEliminar" layoutX="786.0" layoutY="457.0" mnemonicParsing="false" onAction="#eliminarRutaSeleccionada" prefHeight="26.0" prefWidth="98.0" text="Eliminar">
+            <font>
+                <Font name="Segoe UI" size="15.0" />
+            </font>
+        </Button>
     </children>
 </AnchorPane>

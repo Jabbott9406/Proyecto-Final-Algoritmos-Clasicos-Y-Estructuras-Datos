@@ -21,6 +21,8 @@ public class CRUDRutaController {
 
     private Grafo grafo;
 
+    private Ruta rutaEnEdicion = null;
+
     private ObservableList<Parada> listaParadas = FXCollections.observableArrayList();
 
     public void setGrafo(Grafo grafo) {
@@ -53,13 +55,34 @@ public class CRUDRutaController {
                 return;
             }
 
-            Ruta nuevaRuta = grafo.agregarRuta(nombre, inicio, destino, distancia, tiempo, costo);
-            mostrarAlerta("Éxito", "Ruta registrada correctamente:\n" + nuevaRuta);
+            if (rutaEnEdicion != null) {
+                rutaEnEdicion.setNombre(nombre);
+                rutaEnEdicion.setInicio(inicio);
+                rutaEnEdicion.setDestino(destino);
+                rutaEnEdicion.setDistancia(distancia);
+                rutaEnEdicion.setTiempo(tiempo);
+                rutaEnEdicion.setCosto(costo);
 
-            if (listRutaController != null) {
-                listRutaController.getListaRutas().add(nuevaRuta);
+                mostrarAlerta("Éxito", "Ruta modificada correctamente.");
+
+                if (listRutaController != null) {
+                    int index = listRutaController.getListaRutas().indexOf(rutaEnEdicion);
+                    if (index >= 0) {
+                        listRutaController.getListaRutas().set(index, rutaEnEdicion);
+                    }
+                }
+
+            } else {
+                Ruta nuevaRuta = grafo.agregarRuta(nombre, inicio, destino, distancia, tiempo, costo);
+                mostrarAlerta("Éxito", "Ruta registrada correctamente:\n" + nuevaRuta);
+
+                if (listRutaController != null) {
+                    listRutaController.getListaRutas().add(nuevaRuta);
+                }
             }
+
             limpiarCampos();
+            rutaEnEdicion = null;
 
         } catch (NumberFormatException e) {
             mostrarAlerta("Error", "Distancia, tiempo y costo deben ser numéricos.");
@@ -67,6 +90,7 @@ public class CRUDRutaController {
             mostrarAlerta("Error", "Ocurrió un problema:\n" + e.getMessage());
         }
     }
+
 
     @FXML
     private void limpiarCampos() {
@@ -76,6 +100,8 @@ public class CRUDRutaController {
         distanciaField.clear();
         tiempoField.clear();
         costoField.clear();
+
+        rutaEnEdicion = null;
     }
 
     @FXML
@@ -84,12 +110,27 @@ public class CRUDRutaController {
         stage.close();
     }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
+
+    public static void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
+    public void cargarRutaParaEdicion(Ruta ruta) {
+        if (ruta != null) {
+            rutaEnEdicion = ruta;
+            nombreField.setText(ruta.getNombre());
+            inicioCombo.setValue(ruta.getInicio());
+            destinoCombo.setValue(ruta.getDestino());
+            distanciaField.setText(String.valueOf(ruta.getDistancia()));
+            tiempoField.setText(String.valueOf(ruta.getTiempo()));
+            costoField.setText(String.valueOf(ruta.getCosto()));
+
+        }
+    }
+
 }
 
