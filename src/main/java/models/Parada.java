@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Parada {
 
+    private long id;
     private String nombre;
     private String tipo;
     private List<Ruta> rutasDeEntrada;
@@ -13,9 +14,16 @@ public class Parada {
         if(nombre == null || nombre.isBlank()) throw new IllegalArgumentException("Nombre no puede ser null/estar vacio");
         this.nombre = nombre;
         this.rutasDeEntrada = new ArrayList<>();
-        this.tipo = "";
+        this.tipo = tipo;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
     public String getTipo() {
         return tipo;
     }

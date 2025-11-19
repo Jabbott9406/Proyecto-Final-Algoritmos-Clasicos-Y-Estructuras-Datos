@@ -12,6 +12,7 @@ module com.example.proyectofinal244252 {
     requires com.almasb.fxgl.all;
     requires java.desktop;
     requires javafx.graphics;
+    requires java.sql;
 
     opens application to javafx.fxml;
     opens controllers to javafx.fxml;

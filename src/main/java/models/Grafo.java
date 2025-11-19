@@ -1,5 +1,6 @@
 package models;
 
+import DataBase.ParadaDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -62,10 +63,12 @@ public class Grafo {
             for (int j = mapa.get(parada).size() - 1; j >= 0; j--) {
                 eliminarRuta(mapa.get(parada).get(j));
             }
+
         }
 
         mapa.remove(parada);
         paradas.remove(parada);
+        ParadaDAO.getInstance().eliminarParada(parada.getId());
     }
 
     public void eliminarRuta(Ruta ruta) {
@@ -164,4 +167,14 @@ public class Grafo {
         }
         return todasRutas;
     }
+
+    public void cargarDesdeDB() {
+        ParadaDAO paradaDAO = ParadaDAO.getInstance();
+        HashMap<Long, Parada> paradasDB = paradaDAO.obtenerParadas();
+        for (Parada p : paradasDB.values()) {
+            agregarParada(p);
+        }
+
+    }
+
 }

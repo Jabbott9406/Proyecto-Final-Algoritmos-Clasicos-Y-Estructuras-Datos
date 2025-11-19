@@ -62,8 +62,17 @@ public class ListParadaController {
             listaParadas.remove(seleccionado);
             tableParadas.getSelectionModel().clearSelection();
             tableParadas.refresh();
+
+            // eliminar de la DB
+            try {
+                DataBase.ParadaDAO.getInstance().eliminarParada(seleccionado.getId());
+            } catch (Exception e) {
+                new Alert(Alert.AlertType.ERROR, "Error al eliminar de la DB: " + e.getMessage()).showAndWait();
+                e.printStackTrace();
+            }
         }
     }
+
 
     @FXML
     void modificarParada(ActionEvent event) {
@@ -90,8 +99,13 @@ public class ListParadaController {
 
         seleccionado.setNombre(n);
         seleccionado.setTipo(t);
-
         tableParadas.refresh();
+        try {
+            DataBase.ParadaDAO.getInstance().actualizarParada(seleccionado);
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Error al actualizar en la DB: " + e.getMessage()).showAndWait();
+            e.printStackTrace();
+        }
     }
 
     @FXML
