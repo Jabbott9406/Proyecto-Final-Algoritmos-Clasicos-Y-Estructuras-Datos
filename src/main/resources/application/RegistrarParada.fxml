@@ -17,7 +17,7 @@
         <children>
             <Label alignment="CENTER" prefHeight="80.0" prefWidth="700.0" text="Registrar Nueva Parada" textAlignment="CENTER" textFill="WHITE">
                 <font>
-                    <Font name="Segoe UI" size="36.0" />
+                    <Font name="Segoe ui" size="36.0" />
                 </font>
             </Label>
         </children>
@@ -30,17 +30,17 @@
     </ImageView>
 
     <Label layoutX="220.0" layoutY="110.0" text="Nombre de Parada:" textFill="WHITE">
-        <font><Font name="Segoe UI" size="20.0" /></font>
+        <font><Font name="Segoe ui" size="20.0" /></font>
     </Label>
     <TextField fx:id="nombreParadaField" layoutX="220.0" layoutY="145.0" prefWidth="300.0" promptText="EJ: 30 de marzo" />
 
     <Label layoutX="220.0" layoutY="190.0" text="Tipo de Parada:" textFill="WHITE">
-        <font><Font name="Segoe UI" size="20.0" /></font>
+        <font><Font name="Segoe ui" size="20.0" /></font>
     </Label>
     <ComboBox fx:id="tipoParadaBox" layoutX="220.0" layoutY="225.0" prefWidth="300.0" promptText="Seleccione tipo" />
 
     <Button fx:id="btnRegistro" layoutX="223.0" layoutY="280.0" onAction="#agregarParada" prefHeight="35.0" prefWidth="130.0" styleClass="DarkBlue" text="Agregar" textFill="WHITE">
-        <font><Font name="Segoe UI Bold" size="16.0" /></font>
+        <font><Font name="Segoe ui Bold" size="16.0" /></font>
     </Button>
 
     <Button fx:id="btnCancelar" layoutX="400.0" layoutY="280.0" onAction="#salir" prefHeight="35.0" prefWidth="130.0" text="Cancelar" />
