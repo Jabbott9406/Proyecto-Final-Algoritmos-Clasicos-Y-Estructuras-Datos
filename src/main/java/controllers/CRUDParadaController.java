@@ -35,12 +35,26 @@ public class CRUDParadaController {
 
         if (!nombre.isEmpty() && tipo != null) {
             Parada nueva = new Parada(nombre, tipo);
+
+            // Agregar al grafo en memoria
             grafo.agregarParada(nueva);
+
+            // Guardar en la base de datos
+            try {
+                DataBase.ParadaDAO.getInstance().guardarParada(nueva);
+            } catch (Exception e) {
+                mostrarAlerta("Error", "No se pudo guardar la parada en la DB: " + e.getMessage());
+                e.printStackTrace();
+            }
+
             actualizarLista();
             limpiarCampos();
             mostrarAlerta("Éxito", "Parada agregada correctamente.");
+        } else {
+            mostrarAlerta("Error", "Debe ingresar nombre y tipo de parada.");
         }
     }
+
 
     @FXML
     private void actualizarLista() {
