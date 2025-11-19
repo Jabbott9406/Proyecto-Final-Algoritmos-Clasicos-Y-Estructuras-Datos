@@ -58,10 +58,17 @@ public class Dijkstra {
            }
        }
 
-       if(!(distancia.containsKey(destino) || distancia.get(destino) == constante)) {
+
+        Double finalDist = distancia.get(destino);
+        if (finalDist == null || finalDist.isInfinite()) {
+            return null; // No existe camino
+        }
+
+
+       /* if(!(distancia.containsKey(destino) || distancia.get(destino) == constante)) {
            return null; // No existe el camino
 
-       }
+       }*/
 
        List<Ruta> rutaCorta = reconstruirCamino(paradasPrev,inicio,destino); // Se llama a la función para guardar la
         // lista de rutas a seguir para llegar al destino

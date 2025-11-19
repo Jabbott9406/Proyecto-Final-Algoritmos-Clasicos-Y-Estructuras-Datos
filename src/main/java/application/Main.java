@@ -1,6 +1,7 @@
 package application;
 
 import controllers.MainController;
+import controllers.Menu2Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -16,13 +17,14 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/menu-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/Menu2.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        MainController mainController = (MainController) fxmlLoader.getController();
+        scene.getStylesheets().add(getClass().getResource("/css/Style.css").toExternalForm());
+        Menu2Controller mainController = (Menu2Controller) fxmlLoader.getController();
         mainController.pantalla = stage;
         stage.setTitle("Menú Principal");
-        stage.setWidth(Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 20);
-        stage.setHeight(Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50);
+        //stage.setWidth(Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 20);
+        //stage.setHeight(Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50);
         stage.setScene(scene);
         stage.show();
     }
