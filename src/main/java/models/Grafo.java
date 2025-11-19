@@ -1,6 +1,7 @@
 package models;
 
 import DataBase.ParadaDAO;
+import DataBase.RutaDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -169,12 +170,32 @@ public class Grafo {
     }
 
     public void cargarDesdeDB() {
+        // Cargar paradas primero
         ParadaDAO paradaDAO = ParadaDAO.getInstance();
         HashMap<Long, Parada> paradasDB = paradaDAO.obtenerParadas();
         for (Parada p : paradasDB.values()) {
             agregarParada(p);
         }
 
+        // Cargar rutas
+        RutaDAO rutaDAO = RutaDAO.getInstance();
+        HashMap<Long, Ruta> rutasDB = rutaDAO.obtenerRutas(new HashMap<>(), paradasDB); // pasamos HashMap vacío y las paradas
+
+        for (Ruta r : rutasDB.values()) {
+            Parada inicio = r.getInicio();
+            Parada destino = r.getDestino();
+
+            if (inicio != null && destino != null) {
+                // Insertamos en mapa y en rutas de entrada de la parada destino
+                mapa.putIfAbsent(inicio, new ArrayList<>());
+                mapa.get(inicio).add(r);
+                destino.agregarRutaDeEntrada(r);
+            } else {
+                System.out.println("Ruta ignorada por tener parada inexistente: " + r.getNombre() +
+                        " | Inicio: " + (inicio != null ? inicio.getNombre() : "null") +
+                        " | Destino: " + (destino != null ? destino.getNombre() : "null"));
+            }
+        }
     }
 
 }

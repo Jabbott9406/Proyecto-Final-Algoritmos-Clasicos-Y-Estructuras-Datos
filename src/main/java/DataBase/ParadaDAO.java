@@ -28,7 +28,7 @@ public class ParadaDAO {
 
             ResultSet rs = preparedStatement.getGeneratedKeys();
             if (rs.next()) {
-                parada.setId(rs.getLong(1));  // ←🔥 AQUÍ SE ASIGNA EL ID
+                parada.setId(rs.getLong(1));
             }
 
         } catch (SQLException e){
@@ -78,6 +78,10 @@ public class ParadaDAO {
 
     // Eliminar parada por ID
     public void eliminarParada(Long id) {
+        // Primero elimina rutas que tengan esta parada como inicio o destino
+        RutaDAO.getInstance().eliminarRuta(id);
+
+        // Luego elimina la parada
         final String sql = "DELETE FROM parada WHERE id = ?";
 
         try(Connection connection = DataBaseConnection.getConnection()){
@@ -88,4 +92,6 @@ public class ParadaDAO {
             e.printStackTrace();
         }
     }
+
+
 }

@@ -2,6 +2,7 @@ package models;
 
 public class Ruta {
 
+    private long id;
     private String nombre;
     private Parada inicio;
     private Parada destino;
@@ -23,6 +24,14 @@ public class Ruta {
         this.estado = false;
         this.evento = "Normal";    // por defecto normal
         this.transbordo = transbordo;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getNombre() {

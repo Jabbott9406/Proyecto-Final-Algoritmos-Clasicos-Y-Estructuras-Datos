@@ -42,11 +42,11 @@
                 </children>
             </HBox>
 
-            <VBox fx:id="submenuParadas" managed="false" spacing="4" styleClass="submenu-box" visible="true">
+            <VBox fx:id="submenuParadas" managed="false" spacing="4" styleClass="submenu-box" visible="false">
                 <children>
                     <HBox alignment="CENTER_LEFT" onMouseClicked="#abrirRegistrarParada" prefHeight="44.0" prefWidth="280.0" styleClass="submenu-button">
                         <children>
-                     <FontIcon iconLiteral="fas-plus" />
+                     <FontIcon iconLiteral="fas-plus" text="" />
                             <Label styleClass="submenu-text" text="Registrar parada" />
                         </children>
                     </HBox>

@@ -1,4 +1,3 @@
-
 package controllers;
 
 import javafx.collections.FXCollections;
@@ -14,6 +13,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.Stage;
 import models.Grafo;
 import models.Ruta;
+import DataBase.RutaDAO;
 
 public class ListRutaController {
 
@@ -76,7 +76,14 @@ public class ListRutaController {
             CRUDRutaController.mostrarAlerta("Error", "Selecciona una ruta para eliminar.");
             return;
         }
+
+        // Eliminar de grafo en memoria
         grafo.eliminarRuta(seleccionada);
+
+        // Eliminar de base de datos
+        RutaDAO.getInstance().eliminarRuta(seleccionada.getId());
+
+        // Actualizar tabla
         listaRutas.remove(seleccionada);
         CRUDRutaController.mostrarAlerta("Éxito", "Ruta eliminada correctamente.");
     }
@@ -90,7 +97,6 @@ public class ListRutaController {
         }
 
         try {
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/registRuta-view.fxml"));
             Parent root = loader.load();
 
@@ -109,10 +115,10 @@ public class ListRutaController {
         }
     }
 
-
     public void setGrafo(Grafo grafo) {
         this.grafo = grafo;
         if (grafo != null) {
+            // Cargar rutas desde memoria (Grafo ya debería cargar desde DB)
             listaRutas.setAll(grafo.getRutas());
         }
     }

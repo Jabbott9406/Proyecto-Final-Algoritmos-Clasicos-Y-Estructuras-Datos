@@ -6,6 +6,7 @@ module com.example.proyectofinal244252 {
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
+    requires java.sql;
     requires net.synedra.validatorfx;
 
     // Ikonli (necesario para FontIcon):

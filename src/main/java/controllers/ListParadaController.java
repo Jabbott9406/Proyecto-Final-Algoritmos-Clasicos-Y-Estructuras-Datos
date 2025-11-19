@@ -11,7 +11,7 @@ import models.Parada;
 
 import java.util.Optional;
 
-public class ListParadaController {
+public class  ListParadaController {
 
     @FXML
     private TableView<Parada> tableParadas;

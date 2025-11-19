@@ -1,11 +1,10 @@
 package controllers;
 
+import DataBase.RutaDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import models.Grafo;
@@ -66,14 +65,13 @@ public class CRUDRutaController {
             }
 
             if (rutaEnEdicion != null) {
-                rutaEnEdicion.setNombre(nombre);
-                rutaEnEdicion.setInicio(inicio);
-                rutaEnEdicion.setDestino(destino);
-                rutaEnEdicion.setDistancia(distancia);
-                rutaEnEdicion.setTiempo(tiempo);
-                rutaEnEdicion.setCosto(costo);
-                mostrarAlerta("Éxito", "Ruta modificada correctamente.");
+                // Actualizar en memoria
+                grafo.modificarRuta(rutaEnEdicion, nombre, inicio, destino, distancia, tiempo, costo);
 
+                // Actualizar en DB
+                RutaDAO.getInstance().actualizarRuta(rutaEnEdicion);
+
+                mostrarAlerta("Éxito", "Ruta modificada correctamente.");
                 if (listRutaController != null) {
                     int index = listRutaController.getListaRutas().indexOf(rutaEnEdicion);
                     if (index >= 0) {
@@ -81,7 +79,12 @@ public class CRUDRutaController {
                     }
                 }
             } else {
+                // Crear nueva ruta en memoria
                 Ruta nuevaRuta = grafo.agregarRuta(nombre, inicio, destino, distancia, tiempo, costo);
+
+                // Guardar en DB
+                RutaDAO.getInstance().guardarRuta(nuevaRuta);
+
                 mostrarAlerta("Éxito", "Ruta registrada correctamente:\n" + nuevaRuta);
 
                 if (listRutaController != null) {
@@ -94,7 +97,38 @@ public class CRUDRutaController {
             mostrarAlerta("Error", "Distancia, tiempo y costo deben ser numéricos.");
         } catch (Exception e) {
             mostrarAlerta("Error", "Ocurrió un problema:\n" + e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void eliminarRuta() {
+        if (rutaEnEdicion == null) {
+            mostrarAlerta("Error", "Selecciona una ruta para eliminar.");
+            return;
+        }
+
+        Alert confirm = new Alert(AlertType.CONFIRMATION,
+                "¿Eliminar la ruta \"" + rutaEnEdicion.getNombre() + "\"?",
+                ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText(null);
+        confirm.showAndWait().ifPresent(res -> {
+            if (res == ButtonType.OK) {
+                // Eliminar de memoria
+                grafo.eliminarRuta(rutaEnEdicion);
+
+                // Eliminar de DB
+                RutaDAO.getInstance().eliminarRuta(rutaEnEdicion.getId());
+
+                // Eliminar de UI
+                if (listRutaController != null) {
+                    listRutaController.getListaRutas().remove(rutaEnEdicion);
+                }
+
+                limpiarCampos();
+                mostrarAlerta("Éxito", "Ruta eliminada correctamente.");
+            }
+        });
     }
 
     @FXML
