@@ -8,8 +8,7 @@ import java.util.HashMap;
 public class RutaDAO {
     private static RutaDAO instance = null;
 
-    private RutaDAO() {
-    }
+    private RutaDAO() { }
 
     public static RutaDAO getInstance() {
         if (instance == null) {
@@ -115,14 +114,29 @@ public class RutaDAO {
     }
 
     // Eliminar ruta por ID
-    public void eliminarRuta(long paradaId) {
-        final String sql = "DELETE FROM route WHERE inicio = ? OR destino = ?";
+    public void eliminarRuta(long rutaId) {
+        final String sql = "DELETE FROM route WHERE id = ?";
 
         try (Connection connection = DataBaseConnection.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1, rutaId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Eliminar rutas que tengan una parada específica como inicio o destino
+    public void eliminarRutasPorParada(long paradaId) {
+        final String sql = "DELETE FROM route WHERE inicio = ? OR destino = ?";
+
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
             ps.setLong(1, paradaId);
             ps.setLong(2, paradaId);
             ps.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -75,23 +75,26 @@ public class ParadaDAO {
             e.printStackTrace();
         }
     }
-
+    
     // Eliminar parada por ID
     public void eliminarParada(Long id) {
         // Primero elimina rutas que tengan esta parada como inicio o destino
-        RutaDAO.getInstance().eliminarRuta(id);
+        RutaDAO.getInstance().eliminarRutasPorParada(id);
 
         // Luego elimina la parada
         final String sql = "DELETE FROM parada WHERE id = ?";
 
-        try(Connection connection = DataBaseConnection.getConnection()){
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
-        } catch (SQLException e){
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
 
 }

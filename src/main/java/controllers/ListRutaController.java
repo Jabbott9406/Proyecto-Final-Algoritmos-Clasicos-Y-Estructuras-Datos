@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -73,26 +75,38 @@ public class ListRutaController {
     private void eliminarRutaSeleccionada() {
         Ruta seleccionada = tableRutas.getSelectionModel().getSelectedItem();
         if (seleccionada == null) {
-            CRUDRutaController.mostrarAlerta("Error", "Selecciona una ruta para eliminar.");
+            mostrarAlerta("Error", "Selecciona una ruta para eliminar.");
             return;
         }
 
-        // Eliminar de grafo en memoria
-        grafo.eliminarRuta(seleccionada);
+        // Confirmación antes de eliminar
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "¿Eliminar la ruta \"" + seleccionada.getNombre() + "\"?",
+                ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText(null);
 
-        // Eliminar de base de datos
-        RutaDAO.getInstance().eliminarRuta(seleccionada.getId());
+        confirm.showAndWait().ifPresent(res -> {
+            if (res == ButtonType.OK) {
+                // Eliminar de grafo en memoria
+                grafo.eliminarRuta(seleccionada);
 
-        // Actualizar tabla
-        listaRutas.remove(seleccionada);
-        CRUDRutaController.mostrarAlerta("Éxito", "Ruta eliminada correctamente.");
+                // Eliminar de base de datos
+                RutaDAO.getInstance().eliminarRuta(seleccionada.getId());
+
+                // Actualizar tabla
+                listaRutas.remove(seleccionada);
+
+                // Mostrar alerta de éxito
+                mostrarAlerta("Éxito", "Ruta eliminada correctamente.");
+            }
+        });
     }
 
     @FXML
     private void modificarRutaSeleccionada() {
         Ruta seleccionada = tableRutas.getSelectionModel().getSelectedItem();
         if (seleccionada == null) {
-            CRUDRutaController.mostrarAlerta("Error", "Selecciona una ruta para modificar.");
+            mostrarAlerta("Error", "Selecciona una ruta para modificar.");
             return;
         }
 
@@ -111,7 +125,7 @@ public class ListRutaController {
             stage.showAndWait();
 
         } catch (Exception e) {
-            CRUDRutaController.mostrarAlerta("Error", "No se pudo abrir el formulario de edición:\n" + e.getMessage());
+            mostrarAlerta("Error", "No se pudo abrir el formulario de edición:\n" + e.getMessage());
         }
     }
 
@@ -125,5 +139,13 @@ public class ListRutaController {
 
     public ObservableList<Ruta> getListaRutas() {
         return listaRutas;
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }
