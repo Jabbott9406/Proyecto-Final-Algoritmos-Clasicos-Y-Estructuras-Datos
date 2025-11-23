@@ -46,13 +46,13 @@
                 <children>
                     <HBox alignment="CENTER_LEFT" onMouseClicked="#abrirRegistrarParada" prefHeight="44.0" prefWidth="280.0" styleClass="submenu-button">
                         <children>
-                     <FontIcon iconLiteral="fas-plus" text="" />
+                            <FontIcon iconLiteral="fas-plus" text="" />
                             <Label styleClass="submenu-text" text="Registrar parada" />
                         </children>
                     </HBox>
                     <HBox alignment="CENTER_LEFT" onMouseClicked="#abrirListadoParadas" prefHeight="44.0" prefWidth="280.0" styleClass="submenu-button">
                         <children>
-                     <FontIcon iconLiteral="fas-plus" />
+                            <FontIcon iconLiteral="fas-plus" />
                             <Label styleClass="submenu-text" text="Listado de paradas" />
                         </children>
                     </HBox>
@@ -70,13 +70,13 @@
                 <children>
                     <HBox alignment="CENTER_LEFT" onMouseClicked="#abrirRegistrarRuta" prefHeight="44.0" prefWidth="280.0" styleClass="submenu-button">
                         <children>
-                     <FontIcon iconLiteral="fas-plus" />
+                            <FontIcon iconLiteral="fas-plus" />
                             <Label styleClass="submenu-text" text="Registrar ruta" />
                         </children>
                     </HBox>
                     <HBox alignment="CENTER_LEFT" onMouseClicked="#abrirListadoRutas" prefHeight="44.0" prefWidth="280.0" styleClass="submenu-button">
                         <children>
-                     <FontIcon iconLiteral="fas-plus" />
+                            <FontIcon iconLiteral="fas-plus" />
                             <Label styleClass="submenu-text" text="Listado de rutas" />
                         </children>
                     </HBox>
@@ -141,6 +141,10 @@
                                 <Label fx:id="lblDuracion" styleClass="results-text" text="Duración: -" />
                                 <Label fx:id="lblCosto" styleClass="results-text" text="Costo: -" />
                                 <Label fx:id="lblDistancia" styleClass="results-text" text="Distancia: -" />
+
+                                <!-- NUEVO CAMPO EVENTO -->
+                                <Label fx:id="lblEvento" styleClass="results-text" text="Evento: -" />
+
                                 <Separator />
                                 <Label fx:id="lblTramos" styleClass="results-text" text="Tramos: -" />
                                 <Label fx:id="lblListadoRutas" styleClass="results-text" text="" wrapText="true" />

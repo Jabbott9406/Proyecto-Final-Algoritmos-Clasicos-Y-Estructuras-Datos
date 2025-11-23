@@ -9,128 +9,93 @@ public class Ruta {
     private double distancia;
     private double tiempoBase;
     private double tiempo;
+    private double costoBase;
     private double costo;
-    private boolean estado; // True: Esta habilitada. False: ruta no disponible por accidente o x situación.
+    private boolean estado;
     private String evento;
     private String transbordo;
+
 
     public Ruta(String nombre, Parada inicio, Parada destino, double distancia, double tiempo, double costo) {
         this.nombre = nombre;
         this.inicio = inicio;
         this.destino = destino;
         this.distancia = distancia;
+        this.tiempoBase = tiempo;
+        this.costoBase = costo;
         this.tiempo = tiempo;
         this.costo = costo;
-        this.estado = false;
-        this.evento = "Normal";    // por defecto normal
-        this.transbordo = transbordo;
+
+        this.estado = true;
+        this.evento = "Normal";
+        this.transbordo = "No aplica";
     }
 
-    public long getId() {
-        return id;
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public Parada getInicio() { return inicio; }
+    public void setInicio(Parada inicio) { this.inicio = inicio; }
+
+    public Parada getDestino() { return destino; }
+    public void setDestino(Parada destino) { this.destino = destino; }
+
+    public double getDistancia() { return distancia; }
+    public void setDistancia(double distancia) { this.distancia = distancia; }
+
+    public double getTiempo() { return tiempo; }
+    public void setTiempo(double tiempo) { this.tiempo = tiempo; }
+
+    public double getCosto() { return costo; }
+    public void setCosto(double costo) { this.costo = costo; }
+
+    public boolean isEstado() { return estado; }
+    public void setEstado(boolean estado) { this.estado = estado; }
+
+    public String getEvento() { return evento; }
+    public void setEvento(String evento) { this.evento = evento; }
+
+    public String getTransbordo() { return transbordo; }
+
+    public void setTransbordo(String transbordo) { this.transbordo = transbordo; }
+
+    public double getTiempoBase() {
+        return tiempoBase;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setTiempoBase(double t) { this.tiempoBase = t; }
+
+    public double getCostoBase() {
+        return costoBase;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public void setCostoBase(double c) { this.costoBase = c; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public Parada getInicio() {
-        return inicio;
-    }
-
-    public void setInicio(Parada inicio) {
-        this.inicio = inicio;
-    }
-
-    public Parada getDestino() {
-        return destino;
-    }
-
-    public void setDestino(Parada destino) {
-        this.destino = destino;
-    }
-
-    public double getDistancia() {
-        return distancia;
-    }
-
-    public void setDistancia(double distancia) {
-        this.distancia = distancia;
-    }
-
-    public double getTiempo() {
-        return tiempo;
-    }
-
-    public void setTiempo(double tiempo) {
-        this.tiempo = tiempo;
-    }
-
-    public double getCosto() {
-        return costo;
-    }
-
-    public void setCosto(double costo) {
-        this.costo = costo;
-    }
-
-    public boolean isEstado() {
-        return estado;
-    }
-
-    public void setEstado(boolean estado) {
-        this.estado = estado;
-    }
-
-    public String getEvento() {
-        return evento;
-    }
-
-    public void setEvento(String evento) {
-        this.evento = evento;
-    }
-
-    public String getTransbordo() {
-        return transbordo;
-    }
-
-    public void setTransbordo(String transbordo) {
-        this.transbordo = transbordo;
-    }
 
     /**
-     * Nombre: resetTiempo
-     * Parámetros: ninguno
-     * Funcionamiento: restablece el tiempo de la ruta al tiempo base original.
-     * Esto se utiliza antes de aplicar cualquier evento que pueda modificar la duración
-     * de la ruta, como retrasos, lluvia u otros incidentes, asegurando que el tiempo
-     * no se acumule al simular múltiples eventos.
-     * Retorno: no retorna ningún valor.
+     * Restablece valores al valor base original.
+     * Evita acumulaciones infinitas cuando se simulan eventos repetidos.
      */
 
-    public void resetTiempo() {
+
+    public void resetValores() {
         this.tiempo = this.tiempoBase;
+        this.costo = this.costoBase;
+        this.estado = true;
+        this.evento = "Normal";
+        this.transbordo = "No aplica";
     }
 
     public Double getPesoByFiltro(String filtro) {
-        switch (filtro) {
-            case "distancia":
-                return distancia;
-            case "tiempo":
-                return tiempo;
-            case "costo":
-                return costo;
-        }
-
-        return null;
+        return switch (filtro) {
+            case "distancia" -> distancia;
+            case "tiempo" -> tiempo;
+            case "costo" -> costo;
+            default -> null;
+        };
     }
 
     @Override

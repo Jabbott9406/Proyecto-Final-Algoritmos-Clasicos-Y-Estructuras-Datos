@@ -42,6 +42,7 @@ public class Menu2Controller {
 
     // Resultados
     @FXML private Label lblRutaTitulo, lblMotivo, lblDuracion, lblCosto, lblDistancia, lblTramos, lblListadoRutas;
+    @FXML private Label lblEvento;
 
     @FXML private StackPane graphContainer;
 
@@ -73,7 +74,6 @@ public class Menu2Controller {
         ocultarLabelsSidebar();
         actualizarSubmenus();
 
-        // Anclaje dinámico del contenido
         AnchorPane.setLeftAnchor(mainRoot, COLAPSADO);
         sidebar.widthProperty().addListener((obs, oldW, newW) ->
                 AnchorPane.setLeftAnchor(mainRoot, newW.doubleValue())
@@ -92,7 +92,7 @@ public class Menu2Controller {
         actualizarResultado(null, "Selecciona origen y destino.", null);
     }
 
-    //Menú desplegable
+    // Menú
     private void ocultarLabelsSidebar() {
         for (Label l : Arrays.asList(lblMenu,lblHome,lblBus,lblRoute,lblSettings)) {
             l.setVisible(false);
@@ -128,16 +128,14 @@ public class Menu2Controller {
         if (!expandido) {
             menuDesplegable();
             paradasOpen = true;
-        } else
-            paradasOpen = !paradasOpen;
+        } else paradasOpen = !paradasOpen;
         actualizarSubmenus();
     }
-    @FXML private void toggleRutasMenu()   {
+    @FXML private void toggleRutasMenu() {
         if (!expandido) {
             menuDesplegable();
-            rutasOpen   = true;
-        } else
-            rutasOpen   = !rutasOpen;
+            rutasOpen = true;
+        } else rutasOpen = !rutasOpen;
         actualizarSubmenus();
     }
     private void actualizarSubmenus() {
@@ -146,7 +144,7 @@ public class Menu2Controller {
     }
     private void setVis(VBox box, boolean v) { if (box!=null){ box.setVisible(v); box.setManaged(v);} }
 
-    //Combos
+    // Combos
     private void configurarCombos() {
         recargarParadasCombo();
         cbOrigen.setCellFactory(lv -> new ListCell<>() {
@@ -176,7 +174,7 @@ public class Menu2Controller {
         cbDestino.getItems().setAll(grafo.getParadasList());
     }
 
-    //Filtros
+    // Filtros
     private void configurarFiltros() {
         tbDistancia.setSelected(true);
         tbDistancia.setOnAction(e -> { tbTiempo.setSelected(false); tbCosto.setSelected(false); recalcularRutaOptima(); });
@@ -184,7 +182,7 @@ public class Menu2Controller {
         tbCosto.setOnAction(e -> { tbDistancia.setSelected(false); tbTiempo.setSelected(false); recalcularRutaOptima(); });
     }
 
-    //Selección por click en nodo
+    // Evento click
     private void manejarClickNodo(Parada p) {
         if (origenSeleccionado == null) {
             origenSeleccionado = p;
@@ -193,7 +191,6 @@ public class Menu2Controller {
             destinoSeleccionado = p;
             cbDestino.getSelectionModel().select(p);
         } else if (p == origenSeleccionado) {
-            // Reinicia
             origenSeleccionado = null;
             destinoSeleccionado = null;
             cbOrigen.getSelectionModel().clearSelection();
@@ -205,7 +202,7 @@ public class Menu2Controller {
         recalcularRutaOptima();
     }
 
-    //Recalcular y dibujar usando Dijkstra
+    // RECALCULAR
     private void recalcularRutaOptima() {
         renderGraph();
 
@@ -215,11 +212,10 @@ public class Menu2Controller {
             return;
         }
 
-        String filtro = getFiltroString();     // "distancia" | "tiempo" | "costo"
-        String criterio = getCriterioNombre(); // "Distancia" | "Tiempo" | "Costo"
+        String filtro = getFiltroString();
+        String criterio = getCriterioNombre();
 
-        Dijkstra dj = new Dijkstra();
-        RutaMasCorta rm = dj.rutaMasCorta(grafo, origenSeleccionado, destinoSeleccionado, filtro);
+        RutaMasCorta rm = grafo.obtenerMejorRuta(origenSeleccionado, destinoSeleccionado, filtro);
 
         if (rm == null) {
             graphPane.clearCaminoIluminado();
@@ -239,10 +235,8 @@ public class Menu2Controller {
             return;
         }
 
-        // Ilumina el camino con color según filtro
         graphPane.iluminarCamino(path, criterioColor());
 
-        // Actualiza panel de resultados usando los totales de  RutaMasCorta
         actualizarResultadoDesdeRutaMasCorta(rm, path,
                 (path.size() == 1 ? "Mejor ruta directa por " : "Mejor camino por ") + criterio.toLowerCase(),
                 (path.size() == 1 ? path.get(0).getNombre() : null));
@@ -259,16 +253,15 @@ public class Menu2Controller {
         return "Distancia";
     }
     private String criterioColor() {
-        if (tbTiempo.isSelected()) return "#27a9e3";  // azul
-        if (tbCosto.isSelected())  return "#ff9800";  // naranja
-        return "#1dd3b0";                              // verde
+        if (tbTiempo.isSelected()) return "#27a9e3";
+        if (tbCosto.isSelected())  return "#ff9800";
+        return "#1dd3b0";
     }
 
     private void renderGraph() {
         graphPane.render(grafo, origenSeleccionado, destinoSeleccionado);
     }
 
-    //Panel resultados
     private void actualizarResultadoDesdeRutaMasCorta(RutaMasCorta rm, List<Ruta> path, String motivo, String nombreDirecta) {
         double t = rm.getTotalTiempo();
         double c = rm.getTotalCosto();
@@ -279,13 +272,17 @@ public class Menu2Controller {
         lblDuracion.setText("Duración: " + formatNum(t) + " min");
         lblCosto.setText("Costo: $" + formatNum(c));
         lblDistancia.setText("Distancia: " + formatNum(d) + " km");
+        String evento = (rm.getEvento() == null || rm.getEvento().isBlank())
+                ? "Sin evento"
+                : rm.getEvento();
+        lblEvento.setText("Evento: " + evento);
+
         lblTramos.setText("Tramos: " + path.size());
 
         String listado = path.stream().map(Ruta::getNombre).collect(Collectors.joining(" → "));
         lblListadoRutas.setText("Rutas: " + listado);
     }
 
-    // Pantalla cuando no hay ruta
     private void actualizarResultado(List<Ruta> path, String motivo, String nombreDirecta) {
         if (path == null || path.isEmpty()) {
             lblRutaTitulo.setText("Sin ruta");
@@ -293,10 +290,12 @@ public class Menu2Controller {
             lblDuracion.setText("Duración: -");
             lblCosto.setText("Costo: -");
             lblDistancia.setText("Distancia: -");
+            lblEvento.setText("Evento: -");
             lblTramos.setText("Tramos: -");
             lblListadoRutas.setText("");
             return;
         }
+
         double t = path.stream().mapToDouble(Ruta::getTiempo).sum();
         double c = path.stream().mapToDouble(Ruta::getCosto).sum();
         double d = path.stream().mapToDouble(Ruta::getDistancia).sum();
@@ -306,6 +305,8 @@ public class Menu2Controller {
         lblDuracion.setText("Duración: " + formatNum(t) + " min");
         lblCosto.setText("Costo: $" + formatNum(c));
         lblDistancia.setText("Distancia: " + formatNum(d) + " km");
+        lblEvento.setText("Evento: -");
+
         lblTramos.setText("Tramos: " + path.size());
 
         String listado = path.stream().map(Ruta::getNombre).collect(Collectors.joining(" → "));
@@ -341,13 +342,11 @@ public class Menu2Controller {
         tl.play();
     }
 
-    //Ventanas submenú (reutilizando tu grafo)
+    // Ventanas submenú
     @FXML private void abrirRegistrarParada() { abrirVentana("/application/RegistrarParada.fxml","Registrar Parada"); }
     @FXML private void abrirListadoParadas()   { abrirVentana("/application/listParada-view.fxml","Listado de Paradas"); }
     @FXML private void abrirRegistrarRuta()    { abrirVentana("/application/registRuta-view.fxml","Registrar Ruta"); }
     @FXML private void abrirListadoRutas()     { abrirVentana("/application/listRuta-view.fxml","Listado de Rutas"); }
-    @FXML private void abrirCRUDParada()       { abrirVentana("/application/RegistrarParada.fxml","CRUD Parada"); }
-    @FXML private void abrirCRUDRuta()         { abrirVentana("/application/registRuta-view.fxml","CRUD Ruta"); }
 
     private void abrirVentana(String resource, String titulo) {
         try {

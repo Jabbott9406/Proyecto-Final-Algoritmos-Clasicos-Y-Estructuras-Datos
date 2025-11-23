@@ -54,17 +54,14 @@ public class Grafo {
     public void eliminarParada(Parada parada) {
         if (parada == null) throw new IllegalArgumentException("Parada no puede ser null");
 
-        // Elimina rutas de entrada
         for (int i = parada.getRutasDeEntrada().size() - 1; i >= 0; i--) {
             eliminarRuta(parada.getRutasDeEntrada().get(i));
         }
 
-        // Elimina rutas de salida
         if (mapa.get(parada) != null) {
             for (int j = mapa.get(parada).size() - 1; j >= 0; j--) {
                 eliminarRuta(mapa.get(parada).get(j));
             }
-
         }
 
         mapa.remove(parada);
@@ -79,17 +76,21 @@ public class Grafo {
     }
 
     public void modificarRuta(Ruta ruta, String nuevoNombre, Parada nuevoInicio, Parada nuevoDestino, Double nuevaDistancia, Double nuevoTiempo, Double nuevoCosto) {
+
         if (ruta == null) throw new IllegalArgumentException("Ruta no puede ser null");
 
+        // Cambiar nombre
         if (nuevoNombre != null) ruta.setNombre(nuevoNombre);
 
+        // Cambiar inicio
         if (nuevoInicio != null && nuevoInicio != ruta.getInicio()) {
             mapa.putIfAbsent(nuevoInicio, new ArrayList<>());
             mapa.get(ruta.getInicio()).remove(ruta);
             ruta.setInicio(nuevoInicio);
-            mapa.get(ruta.getInicio()).add(ruta);
+            mapa.get(nuevoInicio).add(ruta);
         }
 
+        // Cambiar destino
         if (nuevoDestino != null && nuevoDestino != ruta.getDestino()) {
             mapa.putIfAbsent(nuevoDestino, new ArrayList<>());
             ruta.getDestino().eliminarRutaDeEntrada(ruta);
@@ -97,60 +98,127 @@ public class Grafo {
             nuevoDestino.agregarRutaDeEntrada(ruta);
         }
 
-        if (nuevaDistancia != null) ruta.setDistancia(nuevaDistancia);
-        if (nuevoTiempo != null) ruta.setTiempo(nuevoTiempo);
-        if (nuevoCosto != null) ruta.setCosto(nuevoCosto);
+        if (nuevaDistancia != null) {
+            ruta.setDistancia(nuevaDistancia);
+        }
+
+        if (nuevoTiempo != null) {
+            ruta.setTiempo(nuevoTiempo);
+            ruta.setTiempoBase(nuevoTiempo);
+        }
+
+        if (nuevoCosto != null) {
+            ruta.setCosto(nuevoCosto);
+            ruta.setCostoBase(nuevoCosto);
+        }
+
+        ruta.setEvento("Normal");
+        ruta.setEstado(true);
     }
 
-    public void modificarParada(Parada parada, String nombre) {
-        if (parada != null && nombre != null) parada.setNombre(nombre);
-        else throw new IllegalArgumentException("Parada/nombre no puede ser null");
+    public RutaMasCorta obtenerMejorRuta(Parada inicio, Parada destino, String filtro) {
+        if (inicio == null || destino == null || filtro == null || filtro.isBlank())
+            throw new IllegalArgumentException("inicio/destino/filtro no pueden ser null");
+
+        // Simular eventos antes de calcular rutas
+        simularEventosRetorno();
+
+        switch (filtro.toLowerCase()) {
+            case "distancia" -> {
+                return rutaMasCortaFloyd(inicio, destino, "distancia");
+            }
+            case "tiempo", "costo" -> {
+                // Usar Dijkstra si todas las rutas son normales, Bellman-Ford si hay rutas cerradas
+                boolean hayRutasCerradas = getRutas().stream().anyMatch(r -> !r.isEstado());
+                if (!hayRutasCerradas) {
+                    return new Dijkstra().rutaMasCorta(this, inicio, destino, filtro);
+                } else {
+                    return new BellmanFord().calcular(this, inicio, destino, filtro);
+                }
+            }
+            default -> throw new IllegalArgumentException("Filtro desconocido: " + filtro);
+        }
     }
 
-    public void simularEventos() {
+    private boolean simularEventosRetorno() {
         Random rand = new Random();
 
         for (Parada p : mapa.keySet()) {
             for (Ruta r : mapa.get(p)) {
-                int prob = rand.nextInt(100) + 1;
-                int categoria;
-                if (prob <= 10) categoria = 1;
-                else if (prob <= 25) categoria = 2;
-                else if (prob <= 35) categoria = 3;
-                else categoria = 4;
 
-                switch (categoria) {
-                    case 1 -> {
-                        r.setEstado(false);
-                        r.setEvento("Accidente");
-                        System.out.println("Ha ocurrido un accidente en " + r.getNombre() +
-                                " (" + r.getInicio().getNombre() + " → " + r.getDestino().getNombre() + ")");
-                    }
-                    case 2 -> {
-                        r.setEstado(true);
-                        r.setEvento("Retraso");
-                        r.setTiempo(r.getTiempo() * 1.5);
-                        System.out.println("Hay retraso en " + r.getNombre());
-                    }
-                    case 3 -> {
-                        r.setEstado(true);
-                        r.setEvento("Lluvia");
-                        r.setTiempo(r.getTiempo() * 1.2);
-                        System.out.println("Lluvia en " + r.getNombre());
-                    }
-                    case 4 -> {
-                        r.setEstado(true);
-                        r.setEvento("Normal");
-                    }
+                r.resetValores(); // solo al inicio de la simulación
+
+                int prob = rand.nextInt(100) + 1;
+
+                if (prob <= 5) { // ACCIDENTE GRAVE – RUTA CERRADA
+                    r.setEstado(false);
+                    r.setEvento("Accidente grave (Ruta cerrada)");
+                }
+                else if (prob <= 15) { // ACCIDENTE LEVE
+                    r.setEstado(true);
+                    r.setEvento("Accidente leve (Retraso severo)");
+                    r.setTiempo(r.getTiempoBase() * 2.0);
+                    r.setCosto(r.getCostoBase() * 1.3);
+                }
+                else if (prob <= 30) { // RETRASO
+                    r.setEstado(true);
+                    r.setEvento("Retraso");
+                    r.setTiempo(r.getTiempoBase() * 1.5);
+                    r.setCosto(r.getCostoBase() * 1.2);
+                }
+                else if (prob <= 40) { // LLUVIA
+                    r.setEstado(true);
+                    r.setEvento("Lluvia");
+                    r.setTiempo(r.getTiempoBase() * 1.2);
+                    r.setCosto(r.getCostoBase() * 1.1);
+                }
+                else { // NORMAL
+                    r.setEstado(true);
+                    r.setEvento("Normal");
+                    r.setTiempo(r.getTiempoBase());
+                    r.setCosto(r.getCostoBase());
                 }
             }
         }
+        return true;
     }
 
-    public void mostrarMapa() {
-        for (Parada parada : mapa.keySet()) {
-            System.out.println(parada + " --> " + mapa.get(parada));
+    private RutaMasCorta rutaMasCortaFloyd(Parada inicio, Parada destino, String filtro) {
+        Map<Parada, Map<Parada, List<Ruta>>> rutas = FloydWarshall.calcular(this, filtro);
+
+        for (Parada p : mapa.keySet()) {
+            for (Ruta r : mapa.get(p)) {
+                r.resetValores();
+            }
         }
+
+        List<Ruta> caminoRutas = rutas
+                .getOrDefault(inicio, Collections.emptyMap())
+                .getOrDefault(destino, Collections.emptyList());
+
+        if (caminoRutas.isEmpty()) return null;
+
+        double totalTiempo = 0;
+        double totalCosto = 0;
+        double totalDistancia = 0;
+        double totalPeso = 0;
+
+        for (Ruta r : caminoRutas) {
+            totalTiempo += r.getTiempo();
+            totalCosto += r.getCosto();
+            totalDistancia += r.getDistancia();
+
+            switch (filtro.toLowerCase()) {
+                case "distancia" -> totalPeso += r.getDistancia();
+                case "tiempo"    -> totalPeso += r.getTiempo();
+                case "costo"     -> totalPeso += r.getCosto();
+            }
+        }
+
+        String evento = caminoRutas.get(caminoRutas.size() - 1).getEvento();
+
+        return new RutaMasCorta(caminoRutas, totalTiempo, totalCosto, totalDistancia, totalPeso, filtro, evento
+        );
     }
 
     public List<Ruta> getRutasDeSalida(Parada parada) {
@@ -170,23 +238,20 @@ public class Grafo {
     }
 
     public void cargarDesdeDB() {
-        // Cargar paradas primero
         ParadaDAO paradaDAO = ParadaDAO.getInstance();
         HashMap<Long, Parada> paradasDB = paradaDAO.obtenerParadas();
         for (Parada p : paradasDB.values()) {
             agregarParada(p);
         }
 
-        // Cargar rutas
         RutaDAO rutaDAO = RutaDAO.getInstance();
-        HashMap<Long, Ruta> rutasDB = rutaDAO.obtenerRutas(new HashMap<>(), paradasDB); // pasamos HashMap vacío y las paradas
+        HashMap<Long, Ruta> rutasDB = rutaDAO.obtenerRutas(new HashMap<>(), paradasDB);
 
         for (Ruta r : rutasDB.values()) {
             Parada inicio = r.getInicio();
             Parada destino = r.getDestino();
 
             if (inicio != null && destino != null) {
-                // Insertamos en mapa y en rutas de entrada de la parada destino
                 mapa.putIfAbsent(inicio, new ArrayList<>());
                 mapa.get(inicio).add(r);
                 destino.agregarRutaDeEntrada(r);
@@ -197,5 +262,4 @@ public class Grafo {
             }
         }
     }
-
 }
