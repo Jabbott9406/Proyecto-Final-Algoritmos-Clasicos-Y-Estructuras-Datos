@@ -16,42 +16,73 @@ public class CRUDParadaController {
     @FXML
     private ComboBox<String> tipoParadaBox;
 
-    @FXML
-    private ListView<String> listViewParadas;
-
     private Grafo grafo = Grafo.getInstance();
+
+    // Para edición
+    private Parada paradaEnEdicion = null;
+    private ListParadaController listParadaController;
 
     @FXML
     public void initialize() {
         // Inicializa el ComboBox
         tipoParadaBox.setItems(FXCollections.observableArrayList("Tren", "Metro", "Autobus"));
-        actualizarLista();
     }
 
+    /**
+     * Permite agregar una nueva parada o actualizar una existente.
+     */
     @FXML
     private void agregarParada(ActionEvent event) {
         String nombre = nombreParadaField.getText().trim();
         String tipo = tipoParadaBox.getValue();
 
-        if (!nombre.isEmpty() && tipo != null) {
+        if (nombre.isEmpty() || tipo == null) {
+            mostrarAlerta("Error", "Debe ingresar nombre y tipo de parada.");
+            return;
+        }
+
+        if (paradaEnEdicion != null) {
+            // Actualizar parada existente
+            paradaEnEdicion.setNombre(nombre);
+            paradaEnEdicion.setTipo(tipo);
+
+            try {
+                DataBase.ParadaDAO.getInstance().actualizarParada(paradaEnEdicion);
+            } catch (Exception e) {
+                mostrarAlerta("Error", "No se pudo actualizar la parada en la DB: " + e.getMessage());
+                e.printStackTrace();
+                return;
+            }
+        } else {
+            // Crear nueva parada
             Parada nueva = new Parada(nombre, tipo);
             grafo.agregarParada(nueva);
-            actualizarLista();
-            limpiarCampos();
-            mostrarAlerta("Éxito", "Parada agregada correctamente.");
-        }
-    }
 
-    @FXML
-    private void actualizarLista() {
-        listViewParadas.getItems().clear();
-        grafo.getMapa().keySet().forEach(par -> listViewParadas.getItems().add(par.getNombre()));
+            try {
+                DataBase.ParadaDAO.getInstance().guardarParada(nueva);
+            } catch (Exception e) {
+                mostrarAlerta("Error", "No se pudo guardar la parada en la DB: " + e.getMessage());
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        if (listParadaController != null) {
+            listParadaController.refreshTabla();
+        }
+
+        limpiarCampos();
+
+        // Cerrar ventana al terminar
+        Stage stage = (Stage) nombreParadaField.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
     private void limpiarCampos() {
         nombreParadaField.clear();
         tipoParadaBox.getSelectionModel().clearSelection();
+        paradaEnEdicion = null; // Resetear edición
     }
 
     @FXML
@@ -62,7 +93,16 @@ public class CRUDParadaController {
 
     public void setGrafo(Grafo grafo) {
         this.grafo = grafo;
-        actualizarLista();
+    }
+
+    public void setListParadaController(ListParadaController controller) {
+        this.listParadaController = controller;
+    }
+
+    public void cargarParadaParaEdicion(Parada parada) {
+        this.paradaEnEdicion = parada;
+        nombreParadaField.setText(parada.getNombre());
+        tipoParadaBox.setValue(parada.getTipo());
     }
 
     public static void mostrarAlerta(String titulo, String mensaje) {
