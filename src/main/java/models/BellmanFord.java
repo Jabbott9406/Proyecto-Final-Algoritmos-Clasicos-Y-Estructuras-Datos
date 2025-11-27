@@ -86,7 +86,10 @@ public class BellmanFord {
             evento = "No aplica";
         }
 
-        return new RutaMasCorta(rutaCorta, totalTiempo, totalCosto, totalDistancia, totalPeso, filtro, evento);
+        RutaMasCorta rm = new RutaMasCorta(rutaCorta, totalTiempo, totalCosto, totalDistancia, totalPeso, filtro, evento);
+        // Nuevo: contar transbordos también para distancia/tiempo/costo
+        rm.setTransbordos(contarTransbordos(rutaCorta));
+        return rm;
     }
 
     private double getPesoPorFiltro(Ruta r, String filtro) {
@@ -242,4 +245,52 @@ public class BellmanFord {
         rm.setTransbordos(trans);
         return rm;
     }
+
+    // Método para contar transbordos en filtros distintos de "transbordos"
+// Objetivo: determinar cuántas veces cambiamos de “línea” (tipo de transporte) a lo largo del camino
+// cuando el algoritmo no está en modo especializado de transbordos. Así, aunque optimicemos por distancia,
+// tiempo o costo, todavía mostramos cuántos cambios de modo hubo en el recorrido.
+// Idea general: para cada tramo construimos un identificador de línea. Preferimos el tipo de la parada de inicio;
+// si no existe, probamos con el tipo del destino; si tampoco hay, usamos el nombre de la ruta como último recurso.
+// Luego comparamos línea actual contra la anterior y sumamos cuando hay cambio.
+    private int contarTransbordos(List<Ruta> path) {
+        // Camino vacío o nulo no tiene cambios, devolvemos 0.
+        if (path == null || path.isEmpty()) return 0;
+
+        // Esta función nos da la “línea” con la que identificamos el tramo.
+        // Normalizamos (sin acentos, minúsculas) para evitar falsos cambios por diferencias de escritura.
+        java.util.function.Function<Ruta,String> lineaDe = r -> {
+            // Preferimos el tipo de la parada donde arrancamos el tramo.
+            Parada p = r.getInicio();
+            String tipo = (p != null && p.getTipo() != null && !p.getTipo().isBlank()) ? p.getTipo()
+                    // Si no hay tipo en inicio, probamos el del destino.
+                    : (r.getDestino()!=null && r.getDestino().getTipo()!=null && !r.getDestino().getTipo().isBlank()
+                    ? r.getDestino().getTipo()
+                    // Último recurso: usamos el nombre de la ruta para no quedarnos sin etiqueta.
+                    : r.getNombre());
+
+            // Normalizamos a minúsculas y quitamos acentos para unificar “Autobús”, “autobus”, etc.
+            String s = java.text.Normalizer.normalize(tipo, java.text.Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                    .toLowerCase(java.util.Locale.ROOT)
+                    .trim();
+
+            // Si por alguna razón queda vacío, usamos un guion como valor por defecto.
+            return s.isBlank() ? "-" : s;
+        };
+
+        // Recorremos el camino y contamos los cambios de línea.
+        String prev = null;
+        int trans = 0;
+        for (Ruta r : path) {
+            String lin = lineaDe.apply(r);
+            // Si ya teníamos una línea previa y esta es diferente, incrementamos el conteo.
+            if (prev != null && !prev.equals(lin)) trans++;
+            prev = lin;
+        }
+
+        // Devolvemos el total de transbordos detectados.
+        return trans;
+    }
+
 }

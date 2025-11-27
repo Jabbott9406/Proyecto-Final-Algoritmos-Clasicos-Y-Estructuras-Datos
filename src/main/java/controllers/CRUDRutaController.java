@@ -64,6 +64,12 @@ public class CRUDRutaController {
                 return;
             }
 
+            // Validación para que una ruta no puede ir de una parada a sí misma
+            if (inicio == destino) {
+                mostrarAlerta("Error", "No puedes registrar una ruta que vaya a sí misma.\nSelecciona un destino diferente al origen.");
+                return;
+            }
+
             if (rutaEnEdicion != null) {
                 // Actualizar en memoria
                 grafo.modificarRuta(rutaEnEdicion, nombre, inicio, destino, distancia, tiempo, costo);
