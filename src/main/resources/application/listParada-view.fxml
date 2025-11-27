@@ -25,15 +25,20 @@
                 </Label>
             </children>
         </VBox>
-        <Button fx:id="btnEliminar" layoutX="786.0" layoutY="458.0" mnemonicParsing="false" onAction="#eliminarParada" prefHeight="26.0" prefWidth="98.0" text="Eliminar">
+        <Button fx:id="btnEliminar" layoutX="676.0" layoutY="459.0" mnemonicParsing="false" onAction="#eliminarParada" prefHeight="26.0" prefWidth="98.0" text="Eliminar">
             <font>
-                <Font name="Segoe ui" size="15.0" />
+                <Font name="Segoe UI" size="16.0" />
             </font>
         </Button>
-        <Button fx:id="btnModificar" layoutX="673.0" layoutY="457.0" mnemonicParsing="false" onAction="#modificarParada" prefHeight="26.0" prefWidth="97.0" styleClass="DarkBlue" stylesheets="@../css/Style.css" text="Modificar" textFill="WHITE">
+        <Button fx:id="btnModificar" layoutX="563.0" layoutY="458.0" mnemonicParsing="false" onAction="#modificarParada" prefHeight="26.0" prefWidth="97.0" styleClass="DarkBlue" stylesheets="@../css/Style.css" text="Modificar" textFill="WHITE">
             <font>
                 <Font name="Segoe ui" size="16.0" />
             </font>
         </Button>
+      <Button layoutX="786.0" layoutY="458.0" mnemonicParsing="false" onAction="#salir" onMouseClicked="#salir" prefHeight="29.0" prefWidth="98.0" text="Cancelar">
+         <font>
+            <Font name="Segoe UI" size="16.0" />
+         </font>
+      </Button>
     </children>
 </AnchorPane>

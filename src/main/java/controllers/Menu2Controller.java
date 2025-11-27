@@ -11,7 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import models.Dijkstra;
+import javafx.util.StringConverter;
 import models.Grafo;
 import models.Parada;
 import models.Ruta;
@@ -23,26 +23,21 @@ import java.util.stream.Collectors;
 
 public class Menu2Controller {
 
-    // Barra menú
     @FXML private VBox sidebar;
     @FXML private Label lblMenu, lblHome, lblBus, lblRoute, lblSettings;
     @FXML private VBox submenuParadas, submenuRutas;
 
-    // Área principal
     @FXML private BorderPane mainRoot;
     @FXML private Label lblTitulo;
     @FXML private Label lblTyping;
 
-    // Selección
     @FXML private ComboBox<Parada> cbOrigen;
     @FXML private ComboBox<Parada> cbDestino;
 
-    // Filtros
-    @FXML private ToggleButton tbDistancia, tbTiempo, tbCosto;
+    @FXML private ToggleButton tbDistancia, tbTiempo, tbCosto, tbTransbordos;
 
-    // Resultados
     @FXML private Label lblRutaTitulo, lblMotivo, lblDuracion, lblCosto, lblDistancia, lblTramos, lblListadoRutas;
-    @FXML private Label lblEvento;
+    @FXML private Label lblEvento, lblTransbordos;
 
     @FXML private StackPane graphContainer;
 
@@ -92,7 +87,6 @@ public class Menu2Controller {
         actualizarResultado(null, "Selecciona origen y destino.", null);
     }
 
-    // Menú
     private void ocultarLabelsSidebar() {
         for (Label l : Arrays.asList(lblMenu,lblHome,lblBus,lblRoute,lblSettings)) {
             l.setVisible(false);
@@ -144,9 +138,9 @@ public class Menu2Controller {
     }
     private void setVis(VBox box, boolean v) { if (box!=null){ box.setVisible(v); box.setManaged(v);} }
 
-    // Combos
     private void configurarCombos() {
         recargarParadasCombo();
+
         cbOrigen.setCellFactory(lv -> new ListCell<>() {
             @Override protected void updateItem(Parada item, boolean empty) {
                 super.updateItem(item, empty); setText(empty || item == null ? "" : item.getNombre());
@@ -157,8 +151,24 @@ public class Menu2Controller {
                 super.updateItem(item, empty); setText(empty || item == null ? "" : item.getNombre());
             }
         });
-        cbDestino.setCellFactory(cbOrigen.getCellFactory());
-        cbDestino.setButtonCell(cbOrigen.getButtonCell());
+
+        cbDestino.setCellFactory(lv -> new ListCell<>() {
+            @Override protected void updateItem(Parada item, boolean empty) {
+                super.updateItem(item, empty); setText(empty || item == null ? "" : item.getNombre());
+            }
+        });
+        cbDestino.setButtonCell(new ListCell<>() {
+            @Override protected void updateItem(Parada item, boolean empty) {
+                super.updateItem(item, empty); setText(empty || item == null ? "" : item.getNombre());
+            }
+        });
+
+        StringConverter<Parada> converter = new StringConverter<>() {
+            @Override public String toString(Parada p) { return p == null ? "" : p.getNombre(); }
+            @Override public Parada fromString(String s) { return null; }
+        };
+        cbOrigen.setConverter(converter);
+        cbDestino.setConverter(converter);
 
         cbOrigen.valueProperty().addListener((obs,o,v)-> {
             origenSeleccionado = v;
@@ -170,19 +180,31 @@ public class Menu2Controller {
         });
     }
     private void recargarParadasCombo() {
-        cbOrigen.getItems().setAll(grafo.getParadasList());
-        cbDestino.getItems().setAll(grafo.getParadasList());
+        List<Parada> lista = grafo.getParadasList();
+        cbOrigen.getItems().setAll(lista);
+        cbDestino.getItems().setAll(lista);
+        if (origenSeleccionado != null) cbOrigen.getSelectionModel().select(origenSeleccionado);
+        if (destinoSeleccionado != null) cbDestino.getSelectionModel().select(destinoSeleccionado);
     }
 
-    // Filtros
     private void configurarFiltros() {
+        // Aseguramos color morado SOLO para el toggle de Transbordos
+        if (!tbTransbordos.getStyleClass().contains("chip-purple")) {
+            tbTransbordos.getStyleClass().add("chip-purple");
+        }
+
         tbDistancia.setSelected(true);
-        tbDistancia.setOnAction(e -> { tbTiempo.setSelected(false); tbCosto.setSelected(false); recalcularRutaOptima(); });
-        tbTiempo.setOnAction(e -> { tbDistancia.setSelected(false); tbCosto.setSelected(false); recalcularRutaOptima(); });
-        tbCosto.setOnAction(e -> { tbDistancia.setSelected(false); tbTiempo.setSelected(false); recalcularRutaOptima(); });
+        tbDistancia.setOnAction(e -> { deselectOthers(tbDistancia); recalcularRutaOptima(); });
+        tbTiempo.setOnAction(e    -> { deselectOthers(tbTiempo);    recalcularRutaOptima(); });
+        tbCosto.setOnAction(e     -> { deselectOthers(tbCosto);     recalcularRutaOptima(); });
+        tbTransbordos.setOnAction(e -> { deselectOthers(tbTransbordos); recalcularRutaOptima(); });
+    }
+    private void deselectOthers(ToggleButton selected) {
+        for (ToggleButton tb : Arrays.asList(tbDistancia,tbTiempo,tbCosto,tbTransbordos)) {
+            tb.setSelected(tb == selected);
+        }
     }
 
-    // Evento click
     private void manejarClickNodo(Parada p) {
         if (origenSeleccionado == null) {
             origenSeleccionado = p;
@@ -202,7 +224,6 @@ public class Menu2Controller {
         recalcularRutaOptima();
     }
 
-    // RECALCULAR
     private void recalcularRutaOptima() {
         renderGraph();
 
@@ -217,7 +238,7 @@ public class Menu2Controller {
 
         RutaMasCorta rm = grafo.obtenerMejorRuta(origenSeleccionado, destinoSeleccionado, filtro);
 
-        if (rm == null) {
+        if (rm == null || rm.getRutas() == null || rm.getRutas().isEmpty()) {
             graphPane.clearCaminoIluminado();
             actualizarResultado(null,
                     "No existe ruta entre " + origenSeleccionado.getNombre() + " → " + destinoSeleccionado.getNombre(),
@@ -226,33 +247,30 @@ public class Menu2Controller {
         }
 
         List<Ruta> path = rm.getRutas();
-
-        if (path == null || path.isEmpty()) {
-            graphPane.clearCaminoIluminado();
-            actualizarResultado(null,
-                    "No existe ruta entre " + origenSeleccionado.getNombre() + " → " + destinoSeleccionado.getNombre(),
-                    null);
-            return;
-        }
-
         graphPane.iluminarCamino(path, criterioColor());
 
-        actualizarResultadoDesdeRutaMasCorta(rm, path,
-                (path.size() == 1 ? "Mejor ruta directa por " : "Mejor camino por ") + criterio.toLowerCase(),
+        String motivo = ("transbordos".equalsIgnoreCase(filtro))
+                ? "Mejor camino minimizando transbordos"
+                : (path.size() == 1 ? "Mejor ruta directa por " : "Mejor camino por ") + criterio.toLowerCase();
+
+        actualizarResultadoDesdeRutaMasCorta(rm, path, motivo,
                 (path.size() == 1 ? path.get(0).getNombre() : null));
     }
 
     private String getFiltroString() {
+        if (tbTransbordos.isSelected()) return "transbordos";
         if (tbTiempo.isSelected())  return "tiempo";
         if (tbCosto.isSelected())   return "costo";
         return "distancia";
     }
     private String getCriterioNombre() {
+        if (tbTransbordos.isSelected()) return "Transbordos";
         if (tbTiempo.isSelected()) return "Tiempo";
         if (tbCosto.isSelected())  return "Costo";
         return "Distancia";
     }
     private String criterioColor() {
+        if (tbTransbordos.isSelected()) return "#9b59b6"; // morado
         if (tbTiempo.isSelected()) return "#27a9e3";
         if (tbCosto.isSelected())  return "#ff9800";
         return "#1dd3b0";
@@ -272,11 +290,11 @@ public class Menu2Controller {
         lblDuracion.setText("Duración: " + formatNum(t) + " min");
         lblCosto.setText("Costo: $" + formatNum(c));
         lblDistancia.setText("Distancia: " + formatNum(d) + " km");
-        String evento = (rm.getEvento() == null || rm.getEvento().isBlank())
-                ? "Sin evento"
-                : rm.getEvento();
+
+        String evento = (rm.getEvento() == null || rm.getEvento().isBlank()) ? "Sin evento" : rm.getEvento();
         lblEvento.setText("Evento: " + evento);
 
+        lblTransbordos.setText("Transbordos: " + rm.getTransbordos());
         lblTramos.setText("Tramos: " + path.size());
 
         String listado = path.stream().map(Ruta::getNombre).collect(Collectors.joining(" → "));
@@ -284,33 +302,15 @@ public class Menu2Controller {
     }
 
     private void actualizarResultado(List<Ruta> path, String motivo, String nombreDirecta) {
-        if (path == null || path.isEmpty()) {
-            lblRutaTitulo.setText("Sin ruta");
-            lblMotivo.setText(motivo);
-            lblDuracion.setText("Duración: -");
-            lblCosto.setText("Costo: -");
-            lblDistancia.setText("Distancia: -");
-            lblEvento.setText("Evento: -");
-            lblTramos.setText("Tramos: -");
-            lblListadoRutas.setText("");
-            return;
-        }
-
-        double t = path.stream().mapToDouble(Ruta::getTiempo).sum();
-        double c = path.stream().mapToDouble(Ruta::getCosto).sum();
-        double d = path.stream().mapToDouble(Ruta::getDistancia).sum();
-
-        lblRutaTitulo.setText(nombreDirecta != null ? nombreDirecta : "Camino (" + path.size() + " tramo(s))");
+        lblRutaTitulo.setText("Sin ruta");
         lblMotivo.setText(motivo);
-        lblDuracion.setText("Duración: " + formatNum(t) + " min");
-        lblCosto.setText("Costo: $" + formatNum(c));
-        lblDistancia.setText("Distancia: " + formatNum(d) + " km");
+        lblDuracion.setText("Duración: -");
+        lblCosto.setText("Costo: -");
+        lblDistancia.setText("Distancia: -");
         lblEvento.setText("Evento: -");
-
-        lblTramos.setText("Tramos: " + path.size());
-
-        String listado = path.stream().map(Ruta::getNombre).collect(Collectors.joining(" → "));
-        lblListadoRutas.setText("Rutas: " + listado);
+        lblTransbordos.setText("Transbordos: -");
+        lblTramos.setText("Tramos: -");
+        lblListadoRutas.setText("");
     }
 
     private String formatNum(double v) {
@@ -318,7 +318,6 @@ public class Menu2Controller {
         return String.format(Locale.US, "%.2f", v);
     }
 
-    // Animación
     private void iniciarTypewriter() {
         lblTyping.setText("");
         mostrarFrase(frases[fraseIndex]);
@@ -342,7 +341,6 @@ public class Menu2Controller {
         tl.play();
     }
 
-    // Ventanas submenú
     @FXML private void abrirRegistrarParada() { abrirVentana("/application/RegistrarParada.fxml","Registrar Parada"); }
     @FXML private void abrirListadoParadas()   { abrirVentana("/application/listParada-view.fxml","Listado de Paradas"); }
     @FXML private void abrirRegistrarRuta()    { abrirVentana("/application/registRuta-view.fxml","Registrar Ruta"); }

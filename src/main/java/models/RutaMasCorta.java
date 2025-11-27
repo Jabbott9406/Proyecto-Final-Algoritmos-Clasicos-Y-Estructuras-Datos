@@ -11,6 +11,8 @@ public class RutaMasCorta {
     private double totalPeso;
     private String filtro;
     private String evento;
+    private int transbordos;
+
 
     public RutaMasCorta(List<Ruta> rutas,
                         double totalTiempo,
@@ -54,6 +56,14 @@ public class RutaMasCorta {
 
     public String getEvento() {
         return evento;
+    }
+
+    public int getTransbordos() {
+        return transbordos;
+    }
+
+    public void setTransbordos(int transbordos) {
+        this.transbordos = transbordos;
     }
 
     @Override

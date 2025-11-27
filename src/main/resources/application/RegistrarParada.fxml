@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="700.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CRUDParadaController">
+<AnchorPane prefHeight="437.0" prefWidth="700.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CRUDParadaController">
 
-    <VBox layoutX="0" layoutY="0" prefHeight="80.0" prefWidth="700.0" styleClass="dark-blue-header" stylesheets="@../css/Style.css">
+    <VBox layoutX="7.0" layoutY="7.0" prefHeight="73.0" prefWidth="686.0" styleClass="dark-blue-header" stylesheets="@../css/Style.css">
         <children>
             <Label alignment="CENTER" prefHeight="80.0" prefWidth="700.0" text="Registrar Nueva Parada" textAlignment="CENTER" textFill="WHITE">
                 <font>
@@ -42,6 +42,9 @@
         <font><Font name="Segoe ui Bold" size="16.0" /></font>
     </Button>
 
-    <Button fx:id="btnCancelar" layoutX="400.0" layoutY="280.0" onAction="#salir" prefHeight="35.0" prefWidth="130.0" text="Cancelar" />
+    <Button fx:id="btnCancelar" layoutX="400.0" layoutY="280.0" onAction="#salir" prefHeight="35.0" prefWidth="130.0" text="Cancelar">
+      <font>
+         <Font name="Segoe UI" size="16.0" />
+      </font></Button>
 
 </AnchorPane>

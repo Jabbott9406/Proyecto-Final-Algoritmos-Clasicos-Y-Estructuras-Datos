@@ -102,6 +102,12 @@ public class ListParadaController {
         }
     }
 
+    @FXML
+    private void salir() {
+        Stage stage = (Stage) tableParadas.getScene().getWindow();
+        stage.close();
+    }
+
     public void refreshTabla() {
         if (grafo != null) {
             listaParadas.setAll(grafo.getParadas());

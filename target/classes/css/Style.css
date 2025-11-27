@@ -27,20 +27,18 @@
 
 .buttons {
     -fx-background-color: transparent;
-    -fx-padding: 10 16;                /* margen interno */
+    -fx-padding: 10 16;
     -fx-alignment: CENTER_LEFT;
     -fx-border-style: solid;
-    -fx-border-width: 0 0 0 4;         /* barra izquierda */
+    -fx-border-width: 0 0 0 4;
     -fx-border-color: transparent;
     -fx-background-radius: 6;
     -fx-cursor: hand;
 }
-
 .buttons:hover {
-    -fx-background-color: #3d454d;     /* contraste visible */
-    -fx-border-color: #00BCD4;         /* barra cian */
+    -fx-background-color: #3d454d;
+    -fx-border-color: #00BCD4;
 }
-
 .buttons:pressed,
 .buttons:focused,
 .buttons:selected {
@@ -68,7 +66,9 @@
 
 .table-view { -fx-background-color: #FFFFFF; -fx-table-cell-border-color: #E0E0E0; -fx-base: #FFFFFF; }
 .table-view .column-header-background { -fx-background-color: #E9EEF3; }
-.table-view .column-header .label { -fx-text-fill: black; -fx-font-weight: bold; -fx-alignment: CENTER; -fx-font-size: 14px; }
+.table-view .column-header .label {
+    -fx-text-fill: black; -fx-font-weight: bold; -fx-alignment: CENTER; -fx-font-size: 14px;
+}
 .table-view .table-cell { -fx-text-fill: black; -fx-font-size: 13px; -fx-padding: 8 10; }
 .table-view .table-row-cell:filled:selected,
 .table-view:focused .table-row-cell:filled:selected { -fx-background-color: #0b86c5; -fx-text-fill: white; }
@@ -123,7 +123,6 @@
 }
 .primary-btn:hover { -fx-background-color: #0a5872; }
 
-/* (Si usas este botón en otras pantallas) */
 .small-btn {
     -fx-background-color: #374151;
     -fx-text-fill: #d0d3d8;
@@ -166,10 +165,8 @@
     -fx-font-weight: 700;
     -fx-padding: 6 12;
 }
-
-/* Estado seleccionado genérico (si no coincide con un id específico) */
+/* Estado seleccionado genérico */
 .chip-toggle:selected { -fx-background-color: #1dd3b0; -fx-text-fill: #ffffff; }
-
 /* Colores por filtro usando fx:id del ToggleButton en el FXML */
 #tbDistancia:selected { -fx-background-color: #1dd3b0; }  /* verde */
 #tbTiempo:selected    { -fx-background-color: #27a9e3; }  /* azul  */
@@ -179,16 +176,66 @@
    Grafo: nodos y aristas
    =========================== */
 
+/* Nodos base: un solo bloque (evitamos duplicados) */
 .graph-node {
-    -fx-background-radius: 50%;
-    -fx-background-color: #0c6686;
+    -fx-background-color: #2f3a40;
+    -fx-background-radius: 18;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 6, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 8, 0.2, 0, 2);
 }
-.graph-node.selected-origen  { -fx-background-color: #1dd3b0; }
-.graph-node.selected-destino { -fx-background-color: #ff7b5a; }
+/* Origen y destino seleccionados */
+.graph-node.selected-origen  {
+    -fx-background-color: #1dd3b0;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 2;
+    -fx-border-radius: 18;
+}
+.graph-node.selected-destino {
+    -fx-background-color: #ff6f4d;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 2;
+    -fx-border-radius: 18;
+}
 
-.graph-edge { -fx-stroke: #6e7681; -fx-stroke-width: 2; -fx-opacity: 0.7; }
-/* El color de highlight se aplica inline desde el código según el filtro,
-   pero mantenemos la clase para reforzar grosor/opacidad */
-.graph-edge.highlight { -fx-opacity: 1; -fx-stroke-width: 3.2; }
+/* Aristas: gris por defecto (cuando no está seleccionado) */
+.graph-edge {
+    -fx-stroke: #6e7681;       /* gris neutro */
+    -fx-stroke-width: 2.4;
+    -fx-opacity: 0.85;
+    -fx-stroke-line-cap: round;
+}
+/* Resaltado: el color se pone inline desde el código; aquí reforzamos grosor/opacidad */
+.graph-edge.highlight {
+    -fx-stroke-width: 3.4;
+    -fx-opacity: 1;
+    -fx-stroke-line-cap: round;
+}
+
+/* ===========================
+   ComboBox (mejor contraste de texto)
+   =========================== */
+.combo-box .list-cell { -fx-text-fill: #1c1e21; }
+.combo-box .text     { -fx-fill: #1c1e21; }
+
+
+/* ... (tu CSS existente) ... */
+
+/* Botón chip base */
+.chip-toggle {
+    -fx-background-radius: 18;
+    -fx-padding: 6 12;
+    -fx-background-color: #3b444b;
+    -fx-text-fill: #eaecef;
+}
+
+/* Seleccionado por defecto (verde) para distancia/tiempo/costo */
+.chip-toggle:selected {
+    -fx-background-color: #1dd3b0; /* verde */
+    -fx-text-fill: white;
+}
+
+/* SOLO transbordos morado cuando está seleccionado */
+.chip-toggle.chip-purple:selected {
+    -fx-background-color: #9b59b6; /* morado */
+    -fx-text-fill: white;
+}

@@ -136,6 +136,9 @@ public class Grafo {
                     return new BellmanFord().calcular(this, inicio, destino, filtro);
                 }
             }
+            case "transbordos" -> {
+                return new BellmanFord().calcular(this, inicio, destino, "transbordos");
+            }
             default -> throw new IllegalArgumentException("Filtro desconocido: " + filtro);
         }
     }
