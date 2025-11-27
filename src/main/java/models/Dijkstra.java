@@ -95,7 +95,10 @@ public class Dijkstra {
         // Para distancia, el evento se puede ignorar
         if(filtro.equalsIgnoreCase("distancia")) evento = null;
 
-        return new RutaMasCorta(rutaCorta,totalTiempo,totalCosto,totalDistancia,totalPeso,filtro,evento);
+        RutaMasCorta rm = new RutaMasCorta(rutaCorta,totalTiempo,totalCosto,totalDistancia,totalPeso,filtro,evento);
+        // Nuevo: contar transbordos también en distancia/tiempo/costo
+        rm.setTransbordos(contarTransbordos(rutaCorta));
+        return rm;
     }
 
     public List<Ruta> reconstruirCamino(Map<Parada, Ruta> paradasPrev, Parada inicio, Parada destino) {
@@ -116,6 +119,69 @@ public class Dijkstra {
             return null; // si no lo es, pues devuelve null.
         }
         return camino;
+    }
+
+    // Método para contar transbordos
+// Objetivo: calcular cuántas veces cambiamos de “línea” (tipo de transporte) a lo largo del camino.
+// Idea: para cada tramo, sacamos un identificador de línea. Preferimos el tipo de la parada de inicio;
+// si no hay, usamos el tipo del destino; si tampoco hay, caemos al nombre de la ruta.
+// Luego comparamos línea actual vs. línea anterior: si cambió, sumamos un transbordo.
+    private int contarTransbordos(List<Ruta> path) {
+        // Si el camino está vacío, obviamente no hay transbordos.
+        if (path == null || path.isEmpty()) return 0;
+
+        // Esta lambda nos da la “línea” de un tramo. Normalizamos a minúsculas y sin acentos
+        // para evitar que “Autobús” vs “Autobus” cuenten como diferentes.
+        java.util.function.Function<Ruta,String> lineaDe = r -> {
+            // Preferimos el tipo de la parada donde arrancamos el tramo.
+            Parada p = r.getInicio();
+            String tipo = (p != null && p.getTipo() != null && !p.getTipo().isBlank()) ? p.getTipo()
+                    // Si no hay tipo en inicio, probamos el del destino.
+                    : (r.getDestino()!=null && r.getDestino().getTipo()!=null && !r.getDestino().getTipo().isBlank()
+                    ? r.getDestino().getTipo()
+                    // Último recurso: el nombre de la ruta. Esto evita devolver null/empty.
+                    : r.getNombre());
+
+            // Normalizamos el texto para que “Autobús”, “autobus” y “AUTOBUS” sean la misma línea.
+            String s = java.text.Normalizer.normalize(tipo, java.text.Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                    .toLowerCase(java.util.Locale.ROOT)
+                    .trim();
+
+            // Si queda vacío por cualquier cosa rara, usamos un guion para representar “sin línea”.
+            return s.isBlank() ? "-" : s;
+        };
+
+        // Recorremos el camino comparando línea anterior vs. actual.
+        String prev = null;
+        int trans = 0;
+        for (Ruta r : path) {
+            String lin = lineaDe.apply(r);
+            // Si ya teníamos una línea anterior y esta es diferente, ahí contamos un transbordo.
+            if (prev != null && !prev.equals(lin)) trans++;
+            prev = lin;
+        }
+
+        // Resultado final: número de cambios de línea a lo largo del camino.
+        return trans;
+    }
+
+    // Clase interna Nodo
+// Objetivo: representar una parada con su peso acumulado para la cola de prioridad.
+// Esta clase nos ayuda a manejar Dijkstra de forma cómoda, guardando aquí mismo
+// cuál parada estamos procesando y cuánto cuesta llegar hasta ella.
+    private static class Nodo {
+        // La parada asociada a este nodo.
+        private final Parada parada;
+        // El peso acumulado (según filtro: distancia/tiempo/costo) hasta esta parada.
+        private final double peso;
+
+        // Constructor sencillo: recibe la parada y el valor de peso acumulado.
+        public Nodo(Parada p, double peso){ this.parada = p; this.peso = peso; }
+
+        // Getter para la parada. Lo usamos cuando sacamos el nodo de la cola y necesitamos
+        // saber sobre cuál parada estamos iterando sus rutas de salida.
+        public Parada getParada(){ return parada; }
     }
 
 }

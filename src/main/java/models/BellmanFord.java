@@ -1,5 +1,6 @@
 package models;
 
+import java.text.Normalizer;
 import java.util.*;
 
 public class BellmanFord {
@@ -9,6 +10,11 @@ public class BellmanFord {
     public RutaMasCorta calcular(Grafo grafo, Parada inicio, Parada destino, String filtro) {
         if (grafo == null || inicio == null || destino == null || (filtro == null || filtro.isBlank())) {
             throw new IllegalArgumentException("grafo/inicio/destino/filtro no pueden ser null");
+        }
+
+        // NUEVO: si el filtro es "transbordos", usamos la variante de transbordos y retornamos
+        if ("transbordos".equalsIgnoreCase(filtro)) {
+            return calcularMinTransbordos(grafo, inicio, destino);
         }
 
         List<Parada> paradas = new ArrayList<>(grafo.getMapa().keySet());
@@ -80,7 +86,10 @@ public class BellmanFord {
             evento = "No aplica";
         }
 
-        return new RutaMasCorta(rutaCorta, totalTiempo, totalCosto, totalDistancia, totalPeso, filtro, evento);
+        RutaMasCorta rm = new RutaMasCorta(rutaCorta, totalTiempo, totalCosto, totalDistancia, totalPeso, filtro, evento);
+        // Nuevo: contar transbordos también para distancia/tiempo/costo
+        rm.setTransbordos(contarTransbordos(rutaCorta));
+        return rm;
     }
 
     private double getPesoPorFiltro(Ruta r, String filtro) {
@@ -106,4 +115,182 @@ public class BellmanFord {
         if (!camino.isEmpty() && camino.getFirst().getInicio() != inicio) return null;
         return camino;
     }
+
+    // ---------------- TRANSBORDOS ----------------
+    private RutaMasCorta calcularMinTransbordos(Grafo grafo, Parada inicio, Parada destino) {
+        final double BIG = 1_000_000.0; // prioriza transbordos sobre distancia
+
+        // línea = TIPO de la parada INICIO del tramo (si no hay, probamos destino; si tampoco, usamos nombre de la ruta)
+        java.util.function.Function<Ruta, String> lineaDe = r -> {
+            String tipo = null;
+            if (r.getInicio() != null) tipo = r.getInicio().getTipo();
+            if ((tipo == null || tipo.isBlank()) && r.getDestino() != null) tipo = r.getDestino().getTipo();
+            if (tipo == null || tipo.isBlank()) tipo = r.getNombre();
+
+            String s = Normalizer.normalize(tipo, Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                    .toLowerCase(Locale.ROOT)
+                    .trim();
+            return s.isBlank() ? "-" : s;
+        };
+        java.util.function.BiFunction<Parada, String, String> key = (p, lin) -> p.hashCode() + "|" + (lin == null ? "-" : lin);
+
+        Map<Parada, Set<String>> lineasEnParada = new HashMap<>();
+        for (Parada u : grafo.getMapa().keySet()) {
+            List<Ruta> sal = grafo.getRutasDeSalida(u);
+            if (sal == null) continue;
+            for (Ruta r : sal) {
+                Parada v = r.getDestino();
+                lineasEnParada.computeIfAbsent(v, k -> new HashSet<>()).add(lineaDe.apply(r));
+            }
+        }
+        lineasEnParada.computeIfAbsent(inicio, k -> new HashSet<>()).add("-");
+
+        class Edge {
+            String fromKey, toKey; double w; Ruta ruta;
+            Edge(String f, String t, double w, Ruta r){fromKey=f;toKey=t;this.w=w;this.ruta=r;}
+        }
+
+        List<Edge> edges = new ArrayList<>();
+        Set<String> estados = new HashSet<>();
+        Map<String, Parada> estadoParada = new HashMap<>();
+
+        for (Parada p : grafo.getMapa().keySet()) {
+            Set<String> prevLines = new HashSet<>(lineasEnParada.getOrDefault(p, Collections.emptySet()));
+            if (p == inicio) prevLines.add("-");
+            List<Ruta> sal = grafo.getRutasDeSalida(p);
+            if (sal == null) continue;
+            for (Ruta r : sal) {
+                if (!r.isEstado()) continue;
+                String lr = lineaDe.apply(r);
+                Parada v = r.getDestino();
+                for (String lp : prevLines) {
+                    int cambio = ("-".equals(lp) || lp.equals(lr)) ? 0 : 1;
+                    double w = cambio * BIG + r.getDistancia(); // desempate por distancia
+                    String fk = key.apply(p, lp);
+                    String tk = key.apply(v, lr);
+                    edges.add(new Edge(fk, tk, w, r));
+                    estados.add(fk); estados.add(tk);
+                    estadoParada.put(fk, p); estadoParada.put(tk, v);
+                }
+            }
+        }
+
+        Map<String, Double> dist = new HashMap<>();
+        Map<String, String> predSt = new HashMap<>();
+        Map<String, Ruta> predRt = new HashMap<>();
+        for (String s : estados) dist.put(s, INFINITO);
+        String startKey = key.apply(inicio, "-");
+        dist.put(startKey, 0.0);
+
+        int S = estados.size();
+        for (int i = 0; i < S - 1; i++) {
+            boolean cambio = false;
+            for (Edge e : edges) {
+                double dv = dist.get(e.fromKey);
+                if (dv == INFINITO) continue;
+                double nv = dv + e.w;
+                if (nv < dist.get(e.toKey)) {
+                    dist.put(e.toKey, nv);
+                    predSt.put(e.toKey, e.fromKey);
+                    predRt.put(e.toKey, e.ruta);
+                    cambio = true;
+                }
+            }
+            if (!cambio) break;
+        }
+
+        String bestKey = null;
+        double bestVal = INFINITO;
+        for (String s : estados) {
+            Parada p = estadoParada.get(s);
+            if (p != null && p.equals(destino)) {
+                double v = dist.getOrDefault(s, INFINITO);
+                if (v < bestVal) { bestVal = v; bestKey = s; }
+            }
+        }
+        if (bestKey == null || bestVal == INFINITO) return null;
+
+        LinkedList<Ruta> camino = new LinkedList<>();
+        String cur = bestKey;
+        while (cur != null && !cur.equals(startKey)) {
+            Ruta r = predRt.get(cur);
+            if (r == null) break;
+            camino.addFirst(r);
+            cur = predSt.get(cur);
+        }
+        if (camino.isEmpty()) return null;
+
+        double totalTiempo = 0, totalCosto = 0, totalDistancia = 0;
+        for (Ruta r : camino) {
+            totalTiempo += r.getTiempo();
+            totalCosto += r.getCosto();
+            totalDistancia += r.getDistancia();
+        }
+        int trans = 0;
+        String prevLin = null;
+        for (Ruta r : camino) {
+            String lin = lineaDe.apply(r);
+            if (prevLin != null && !prevLin.equals(lin)) trans++;
+            prevLin = lin;
+        }
+        String evento = "Normal";
+        for (Ruta r : camino) {
+            if (r.getEvento() != null && !r.getEvento().isBlank() && !"Normal".equalsIgnoreCase(r.getEvento())) {
+                evento = r.getEvento(); break;
+            }
+        }
+
+        RutaMasCorta rm = new RutaMasCorta(camino, totalTiempo, totalCosto, totalDistancia, trans, "transbordos", evento);
+        rm.setTransbordos(trans);
+        return rm;
+    }
+
+    // Método para contar transbordos en filtros distintos de "transbordos"
+// Objetivo: determinar cuántas veces cambiamos de “línea” (tipo de transporte) a lo largo del camino
+// cuando el algoritmo no está en modo especializado de transbordos. Así, aunque optimicemos por distancia,
+// tiempo o costo, todavía mostramos cuántos cambios de modo hubo en el recorrido.
+// Idea general: para cada tramo construimos un identificador de línea. Preferimos el tipo de la parada de inicio;
+// si no existe, probamos con el tipo del destino; si tampoco hay, usamos el nombre de la ruta como último recurso.
+// Luego comparamos línea actual contra la anterior y sumamos cuando hay cambio.
+    private int contarTransbordos(List<Ruta> path) {
+        // Camino vacío o nulo no tiene cambios, devolvemos 0.
+        if (path == null || path.isEmpty()) return 0;
+
+        // Esta función nos da la “línea” con la que identificamos el tramo.
+        // Normalizamos (sin acentos, minúsculas) para evitar falsos cambios por diferencias de escritura.
+        java.util.function.Function<Ruta,String> lineaDe = r -> {
+            // Preferimos el tipo de la parada donde arrancamos el tramo.
+            Parada p = r.getInicio();
+            String tipo = (p != null && p.getTipo() != null && !p.getTipo().isBlank()) ? p.getTipo()
+                    // Si no hay tipo en inicio, probamos el del destino.
+                    : (r.getDestino()!=null && r.getDestino().getTipo()!=null && !r.getDestino().getTipo().isBlank()
+                    ? r.getDestino().getTipo()
+                    // Último recurso: usamos el nombre de la ruta para no quedarnos sin etiqueta.
+                    : r.getNombre());
+
+            // Normalizamos a minúsculas y quitamos acentos para unificar “Autobús”, “autobus”, etc.
+            String s = java.text.Normalizer.normalize(tipo, java.text.Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                    .toLowerCase(java.util.Locale.ROOT)
+                    .trim();
+
+            // Si por alguna razón queda vacío, usamos un guion como valor por defecto.
+            return s.isBlank() ? "-" : s;
+        };
+
+        // Recorremos el camino y contamos los cambios de línea.
+        String prev = null;
+        int trans = 0;
+        for (Ruta r : path) {
+            String lin = lineaDe.apply(r);
+            // Si ya teníamos una línea previa y esta es diferente, incrementamos el conteo.
+            if (prev != null && !prev.equals(lin)) trans++;
+            prev = lin;
+        }
+
+        // Devolvemos el total de transbordos detectados.
+        return trans;
+    }
+
 }

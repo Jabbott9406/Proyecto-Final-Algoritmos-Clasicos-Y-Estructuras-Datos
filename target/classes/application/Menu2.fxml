@@ -8,37 +8,56 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Menu2Controller">
+<AnchorPane prefHeight="720.0"
+            prefWidth="1280.0"
+            styleClass="parent"
+            stylesheets="@../css/Style.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.Menu2Controller">
 
     <children>
-        <!-- SIDEBAR -->
-        <VBox fx:id="sidebar" alignment="TOP_CENTER" maxWidth="280.0" minWidth="80.0" prefHeight="720.0" prefWidth="80.0" spacing="0" styleClass="sidebar">
+        <!-- SIDEBAR (igual que antes) -->
+        <VBox fx:id="sidebar"
+              alignment="TOP_CENTER"
+              maxWidth="280.0"
+              minWidth="80.0"
+              prefHeight="720.0"
+              prefWidth="80.0"
+              spacing="0"
+              styleClass="sidebar">
 
-            <HBox alignment="CENTER_LEFT" onMouseClicked="#menuDesplegable" prefHeight="60.0" prefWidth="280.0" styleClass="buttons">
+            <HBox alignment="CENTER_LEFT"
+                  onMouseClicked="#menuDesplegable"
+                  prefHeight="60.0"
+                  prefWidth="280.0"
+                  styleClass="buttons">
                 <children>
-                    <FontIcon iconLiteral="fas-bars" iconSize="20" />
+                    <FontIcon iconLiteral="fas-bars" iconSize="20"/>
                     <Label fx:id="lblMenu" managed="false" styleClass="menu-text" text="Menú" visible="false">
-                        <font><Font size="14" /></font>
+                        <font><Font size="14"/></font>
                     </Label>
                 </children>
             </HBox>
 
             <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="280.0" styleClass="buttons">
                 <children>
-                    <FontIcon iconLiteral="fas-home" iconSize="18" />
-                    <Label fx:id="lblHome" managed="false" styleClass="menu-text" text="Inicio" visible="false" />
+                    <FontIcon iconLiteral="fas-home" iconSize="18"/>
+                    <Label fx:id="lblHome" managed="false" styleClass="menu-text" text="Inicio" visible="false"/>
                 </children>
             </HBox>
 
             <HBox alignment="CENTER_LEFT" onMouseClicked="#toggleParadasMenu" prefHeight="60.0" prefWidth="280.0" styleClass="buttons">
                 <children>
-                    <FontIcon iconLiteral="fas-bus" iconSize="18" />
-                    <Label fx:id="lblBus" managed="false" styleClass="menu-text" text="Paradas" visible="false" />
+                    <FontIcon iconLiteral="fas-bus" iconSize="18"/>
+                    <Label fx:id="lblBus" managed="false" styleClass="menu-text" text="Paradas" visible="false"/>
                 </children>
             </HBox>
 
@@ -46,14 +65,14 @@
                 <children>
                     <HBox alignment="CENTER_LEFT" onMouseClicked="#abrirRegistrarParada" prefHeight="44.0" prefWidth="280.0" styleClass="submenu-button">
                         <children>
-                            <FontIcon iconLiteral="fas-plus" text="" />
-                            <Label styleClass="submenu-text" text="Registrar parada" />
+                            <FontIcon iconLiteral="fas-plus"/>
+                            <Label styleClass="submenu-text" text="Registrar parada"/>
                         </children>
                     </HBox>
                     <HBox alignment="CENTER_LEFT" onMouseClicked="#abrirListadoParadas" prefHeight="44.0" prefWidth="280.0" styleClass="submenu-button">
                         <children>
-                            <FontIcon iconLiteral="fas-plus" />
-                            <Label styleClass="submenu-text" text="Listado de paradas" />
+                            <FontIcon iconLiteral="fas-list"/>
+                            <Label styleClass="submenu-text" text="Listado de paradas"/>
                         </children>
                     </HBox>
                 </children>
@@ -61,8 +80,8 @@
 
             <HBox alignment="CENTER_LEFT" onMouseClicked="#toggleRutasMenu" prefHeight="60.0" prefWidth="280.0" styleClass="buttons">
                 <children>
-                    <FontIcon iconLiteral="fas-route" iconSize="18" />
-                    <Label fx:id="lblRoute" managed="false" styleClass="menu-text" text="Rutas" visible="false" />
+                    <FontIcon iconLiteral="fas-route" iconSize="18"/>
+                    <Label fx:id="lblRoute" managed="false" styleClass="menu-text" text="Rutas" visible="false"/>
                 </children>
             </HBox>
 
@@ -70,14 +89,14 @@
                 <children>
                     <HBox alignment="CENTER_LEFT" onMouseClicked="#abrirRegistrarRuta" prefHeight="44.0" prefWidth="280.0" styleClass="submenu-button">
                         <children>
-                            <FontIcon iconLiteral="fas-plus" />
-                            <Label styleClass="submenu-text" text="Registrar ruta" />
+                            <FontIcon iconLiteral="fas-plus"/>
+                            <Label styleClass="submenu-text" text="Registrar ruta"/>
                         </children>
                     </HBox>
                     <HBox alignment="CENTER_LEFT" onMouseClicked="#abrirListadoRutas" prefHeight="44.0" prefWidth="280.0" styleClass="submenu-button">
                         <children>
-                            <FontIcon iconLiteral="fas-plus" />
-                            <Label styleClass="submenu-text" text="Listado de rutas" />
+                            <FontIcon iconLiteral="fas-list"/>
+                            <Label styleClass="submenu-text" text="Listado de rutas"/>
                         </children>
                     </HBox>
                 </children>
@@ -85,43 +104,66 @@
 
             <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="280.0" styleClass="buttons">
                 <children>
-                    <FontIcon iconLiteral="fas-cog" iconSize="18" />
-                    <Label fx:id="lblSettings" managed="false" styleClass="menu-text" text="Ajustes" visible="false" />
+                    <FontIcon iconLiteral="fas-cog" iconSize="18"/>
+                    <Label fx:id="lblSettings" managed="false" styleClass="menu-text" text="Ajustes" visible="false"/>
                 </children>
             </HBox>
         </VBox>
 
         <!-- Área principal -->
-        <BorderPane fx:id="mainRoot" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <BorderPane fx:id="mainRoot"
+                    AnchorPane.bottomAnchor="0.0"
+                    AnchorPane.leftAnchor="80.0"
+                    AnchorPane.rightAnchor="0.0"
+                    AnchorPane.topAnchor="0.0">
 
             <center>
                 <VBox fillWidth="true" spacing="24">
                     <padding>
-                        <Insets bottom="24" left="24" right="24" top="24" />
+                        <Insets bottom="24" left="24" right="24" top="24"/>
                     </padding>
 
                     <!-- Título + animación -->
                     <HBox alignment="CENTER_LEFT" spacing="18">
-                        <Label fx:id="lblTitulo" styleClass="title-label" text="MAPA" />
-                        <Label fx:id="lblTyping" styleClass="typing-label" />
+                        <Label fx:id="lblTitulo" styleClass="title-label" text="MAPA"/>
+                        <Label fx:id="lblTyping" styleClass="typing-label"/>
                     </HBox>
 
-                    <!-- Selección origen/destino -->
-                    <HBox alignment="CENTER_LEFT" spacing="28">
-                        <VBox spacing="6">
-                            <Label styleClass="field-title" text="ORIGEN" />
-                            <ComboBox fx:id="cbOrigen" prefWidth="360" promptText="Selecciona..." styleClass="search-field" />
+                    <!-- Barra de selección y filtros alineados en una sola línea -->
+                    <!-- Nuevo layout:
+                         - Un HBox principal
+                         - Dos VBoxes para ORIGEN y DESTINO con HGrow = ALWAYS (llenan espacio)
+                         - Un Region spacer para empujar los filtros a la derecha
+                         - HBox de filtros alineado verticalmente con los combos
+                    -->
+                    <HBox alignment="CENTER_LEFT" spacing="24">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label styleClass="field-title" text="ORIGEN"/>
+                            <ComboBox fx:id="cbOrigen"
+                                      prefWidth="360"
+                                      maxWidth="Infinity"
+                                      promptText="Selecciona..."
+                                      styleClass="search-field"/>
                         </VBox>
-                        <VBox alignment="CENTER" spacing="12" />
-                        <VBox spacing="6">
-                            <Label styleClass="field-title" text="DESTINO" />
-                            <ComboBox fx:id="cbDestino" prefWidth="360" promptText="Selecciona..." styleClass="search-field" />
+
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label styleClass="field-title" text="DESTINO"/>
+                            <ComboBox fx:id="cbDestino"
+                                      prefWidth="360"
+                                      maxWidth="Infinity"
+                                      promptText="Selecciona..."
+                                      styleClass="search-field"/>
                         </VBox>
-                        <!-- Filtros -->
-                        <HBox spacing="6">
-                            <ToggleButton fx:id="tbDistancia" selected="true" styleClass="chip-toggle" text="DISTANCIA" />
-                            <ToggleButton fx:id="tbTiempo" styleClass="chip-toggle" text="TIEMPO" />
-                            <ToggleButton fx:id="tbCosto" styleClass="chip-toggle" text="COSTO" />
+
+                        <!-- Espaciador flexible -->
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <!-- Filtros alineados a la derecha -->
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <ToggleButton fx:id="tbDistancia" selected="true" styleClass="chip-toggle" text="DISTANCIA"/>
+                            <ToggleButton fx:id="tbTiempo" styleClass="chip-toggle" text="TIEMPO"/>
+                            <ToggleButton fx:id="tbCosto" styleClass="chip-toggle" text="COSTO"/>
+                            <ToggleButton fx:id="tbTransbordos" styleClass="chip-toggle" text="TRANSBORDOS"/>
                         </HBox>
                     </HBox>
 
@@ -133,21 +175,19 @@
                         </StackPane>
 
                         <VBox prefWidth="300" spacing="14">
-                            <Label styleClass="results-title" text="RESULTADOS" />
+                            <Label styleClass="results-title" text="RESULTADOS"/>
                             <VBox spacing="6" styleClass="result-card">
-                                <Label fx:id="lblRutaTitulo" styleClass="result-title" text="Sin ruta" />
-                                <Label fx:id="lblMotivo" styleClass="results-text" text="Selecciona origen y destino." wrapText="true" />
-                                <Separator />
-                                <Label fx:id="lblDuracion" styleClass="results-text" text="Duración: -" />
-                                <Label fx:id="lblCosto" styleClass="results-text" text="Costo: -" />
-                                <Label fx:id="lblDistancia" styleClass="results-text" text="Distancia: -" />
-
-                                <!-- NUEVO CAMPO EVENTO -->
-                                <Label fx:id="lblEvento" styleClass="results-text" text="Evento: -" />
-
-                                <Separator />
-                                <Label fx:id="lblTramos" styleClass="results-text" text="Tramos: -" />
-                                <Label fx:id="lblListadoRutas" styleClass="results-text" text="" wrapText="true" />
+                                <Label fx:id="lblRutaTitulo" styleClass="result-title" text="Sin ruta"/>
+                                <Label fx:id="lblMotivo" styleClass="results-text" text="Selecciona origen y destino." wrapText="true"/>
+                                <Separator/>
+                                <Label fx:id="lblDuracion" styleClass="results-text" text="Duración: -"/>
+                                <Label fx:id="lblCosto" styleClass="results-text" text="Costo: -"/>
+                                <Label fx:id="lblDistancia" styleClass="results-text" text="Distancia: -"/>
+                                <Label fx:id="lblTransbordos" styleClass="results-text" text="Transbordos: -"/>
+                                <Label fx:id="lblEvento" styleClass="results-text" text="Evento: -"/>
+                                <Separator/>
+                                <Label fx:id="lblTramos" styleClass="results-text" text="Tramos: -"/>
+                                <Label fx:id="lblListadoRutas" styleClass="results-text" text="" wrapText="true"/>
                             </VBox>
                         </VBox>
                     </HBox>

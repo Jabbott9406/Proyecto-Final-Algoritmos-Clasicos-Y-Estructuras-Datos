@@ -1,13 +1,9 @@
-/* ===========================
-   Tema oscuro base y layout
-   =========================== */
-
-/* Paleta base */
-.parent { -fx-background-color: #2F3238; }
+/* Fondo general y contenedores principales */
+.parent  { -fx-background-color: #2F3238; }
 .sidebar { -fx-background-color: #333333; }
 .content { -fx-background-color: #1f2327; }
 
-/* Variantes azules de acento */
+/* Encabezado/áreas con azul principal */
 .DarkBlue { -fx-background-color: #0b5ea8; }
 .dark-blue-header {
     -fx-background-color: #0b5ea8;
@@ -21,26 +17,21 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 6, 0.5, 0, 2);
 }
 
-/* ===========================
-   Sidebar y botones de menú
-   =========================== */
-
+/* Botones del sidebar */
 .buttons {
     -fx-background-color: transparent;
-    -fx-padding: 10 16;                /* margen interno */
+    -fx-padding: 10 16;
     -fx-alignment: CENTER_LEFT;
     -fx-border-style: solid;
-    -fx-border-width: 0 0 0 4;         /* barra izquierda */
+    -fx-border-width: 0 0 0 4;
     -fx-border-color: transparent;
     -fx-background-radius: 6;
     -fx-cursor: hand;
 }
-
 .buttons:hover {
-    -fx-background-color: #3d454d;     /* contraste visible */
-    -fx-border-color: #00BCD4;         /* barra cian */
+    -fx-background-color: #3d454d;
+    -fx-border-color: #00BCD4;
 }
-
 .buttons:pressed,
 .buttons:focused,
 .buttons:selected {
@@ -48,72 +39,52 @@
     -fx-border-color: #03A9F4;
 }
 
-/* Texto e íconos dentro de los botones */
+/* Texto e íconos dentro de los botones del sidebar */
 .buttons .label, .buttons .text { -fx-text-fill: #B0BEC5; }
 .buttons:hover .label, .buttons:hover .text { -fx-text-fill: #FFFFFF; }
-
-/* Ikonli (FontIcon) */
 .sidebar .ikonli-font-icon { -fx-icon-color: #B0BEC5; }
 .buttons:hover .ikonli-font-icon { -fx-icon-color: #FFFFFF; }
 .buttons:pressed .ikonli-font-icon,
 .buttons:selected .ikonli-font-icon,
 .buttons:focused .ikonli-font-icon { -fx-icon-color: #03A9F4; }
 
-/* Texto de etiquetas del menú (cuando está expandido) */
+/* Texto de opciones cuando el sidebar está expandido */
 .menu-text { -fx-text-fill: #B0BEC5; -fx-font-size: 13px; }
 
-/* ===========================
-   TableView (modo claro sobre fondo oscuro)
-   =========================== */
-
+/* TableView en modo claro (sobre fondo oscuro) */
 .table-view { -fx-background-color: #FFFFFF; -fx-table-cell-border-color: #E0E0E0; -fx-base: #FFFFFF; }
 .table-view .column-header-background { -fx-background-color: #E9EEF3; }
-.table-view .column-header .label { -fx-text-fill: black; -fx-font-weight: bold; -fx-alignment: CENTER; -fx-font-size: 14px; }
+.table-view .column-header .label {
+    -fx-text-fill: black; -fx-font-weight: bold; -fx-alignment: CENTER; -fx-font-size: 14px;
+}
 .table-view .table-cell { -fx-text-fill: black; -fx-font-size: 13px; -fx-padding: 8 10; }
 .table-view .table-row-cell:filled:selected,
 .table-view:focused .table-row-cell:filled:selected { -fx-background-color: #0b86c5; -fx-text-fill: white; }
 .table-view .table-row-cell:filled:selected .text,
 .table-view:focused .table-row-cell:filled:selected .text { -fx-fill: white; }
 
-/* ===========================
-   Scrollbars
-   =========================== */
-
+/* Scrollbars discretos */
 .scroll-bar:vertical, .scroll-bar:horizontal { -fx-background-color: transparent; }
 .scroll-bar .thumb { -fx-background-color: rgba(255,255,255,0.15); -fx-background-radius: 4; }
 .scroll-bar .thumb:hover { -fx-background-color: rgba(255,255,255,0.25); }
 
-/* ===========================
-   Chat bubble estilo "ChatGPT"
-   =========================== */
-
+/* Burbujas tipo chat */
 .chat-bubble { -fx-background-color: rgba(255,255,255,0.08); -fx-background-radius: 12; -fx-padding: 8 12; }
 .bubble-text { -fx-text-fill: #e9ecef; -fx-font-size: 13.5px; }
 
-/* ===========================
-   Submenús del sidebar
-   =========================== */
-
+/* Submenús del sidebar */
 .submenu-box { -fx-padding: 4 0 8 36; }
 .submenu-button { -fx-background-color: transparent; -fx-padding: 6 10; -fx-spacing: 10; -fx-cursor: hand; }
 .submenu-button:hover { -fx-background-color: rgba(255,255,255,0.06); }
 .submenu-text { -fx-text-fill: #d0d3d8; -fx-font-size: 12px; }
 
-/* ===========================
-   Encabezado y textos
-   =========================== */
-
-.title-label { -fx-text-fill: #ffffff; -fx-font-size: 28px; -fx-font-weight: 800; }
+/* Títulos y textos generales */
+.title-label  { -fx-text-fill: #ffffff; -fx-font-size: 28px; -fx-font-weight: 800; }
 .typing-label { -fx-background-color: rgba(255,255,255,0.08); -fx-padding: 6 16; -fx-background-radius: 14; -fx-text-fill: #e2e6ea; -fx-font-size: 13px; }
+.field-title  { -fx-text-fill: #d0d3d8; -fx-font-size: 12px; -fx-font-weight: bold; }
 
-.field-title { -fx-text-fill: #d0d3d8; -fx-font-size: 12px; -fx-font-weight: bold; }
-
-/* ===========================
-   Inputs y botones
-   =========================== */
-
+/* Inputs y botones comunes */
 .search-field { -fx-background-radius: 8; -fx-padding: 8 10; }
-
 .primary-btn {
     -fx-background-color: #0c6686;
     -fx-text-fill: white;
@@ -122,8 +93,6 @@
     -fx-padding: 10 18;
 }
 .primary-btn:hover { -fx-background-color: #0a5872; }
-
-/* (Si usas este botón en otras pantallas) */
 .small-btn {
     -fx-background-color: #374151;
     -fx-text-fill: #d0d3d8;
@@ -133,10 +102,7 @@
 }
 .small-btn:hover { -fx-background-color: #4b5563; }
 
-/* ===========================
-   Contenedor "mapa" (grafo)
-   =========================== */
-
+/* Marco del panel donde va el grafo */
 .map-frame {
     -fx-background-color: #2d3238;
     -fx-border-color: #ffffff;
@@ -145,50 +111,55 @@
     -fx-background-radius: 6;
 }
 
-/* ===========================
-   Panel de resultados
-   =========================== */
-
-.results-title { -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; }
+/* Panel de resultados (tarjeta a la derecha) */
+.results-title { -fx-text-fill: white;   -fx-font-size: 14px; -fx-font-weight: bold; }
 .results-text  { -fx-text-fill: #cfd4d9; -fx-font-size: 12px; }
 .result-title  { -fx-text-fill: #ffffff; -fx-font-size: 13px; -fx-font-weight: bold; }
 .result-card   { -fx-background-color: rgba(255,255,255,0.07); -fx-background-radius: 10; -fx-padding: 12 16; }
 
-/* ===========================
-   Chips de filtro (ToggleButtons)
-   =========================== */
-
+/* Chips de filtro (Distancia/Tiempo/Costo/Transbordos) */
 .chip-toggle {
-    -fx-background-radius: 8;
-    -fx-background-color: #3b424a;
-    -fx-text-fill: #e4e7eb;
+    -fx-background-radius: 18;
+    -fx-padding: 6 12;
+    -fx-background-color: #3b444b;
+    -fx-text-fill: #eaecef;
     -fx-font-size: 11px;
     -fx-font-weight: 700;
-    -fx-padding: 6 12;
 }
-
-/* Estado seleccionado genérico (si no coincide con un id específico) */
-.chip-toggle:selected { -fx-background-color: #1dd3b0; -fx-text-fill: #ffffff; }
-
-/* Colores por filtro usando fx:id del ToggleButton en el FXML */
+/* Seleccionado por defecto (si no hay override específico) */
+.chip-toggle:selected {
+    -fx-background-color: #1dd3b0;
+    -fx-text-fill: white;
+}
+/* Overrides por filtro (usando fx:id en el FXML) */
 #tbDistancia:selected { -fx-background-color: #1dd3b0; }  /* verde */
-#tbTiempo:selected    { -fx-background-color: #27a9e3; }  /* azul  */
+#tbTiempo:selected    { -fx-background-color: #27a9e3; }  /* azul */
 #tbCosto:selected     { -fx-background-color: #ff9800; }  /* naranja */
-
-/* ===========================
-   Grafo: nodos y aristas
-   =========================== */
-
-.graph-node {
-    -fx-background-radius: 50%;
-    -fx-background-color: #0c6686;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 6, 0, 0, 2);
+/* Transbordos en morado, se aplica con styleClass "chip-purple" */
+.chip-toggle.chip-purple:selected {
+    -fx-background-color: #9b59b6;
+    -fx-text-fill: white;
 }
-.graph-node.selected-origen  { -fx-background-color: #1dd3b0; }
-.graph-node.selected-destino { -fx-background-color: #ff7b5a; }
 
-.graph-edge { -fx-stroke: #6e7681; -fx-stroke-width: 2; -fx-opacity: 0.7; }
-/* El color de highlight se aplica inline desde el código según el filtro,
-   pero mantenemos la clase para reforzar grosor/opacidad */
-.graph-edge.highlight { -fx-opacity: 1; -fx-stroke-width: 3.2; }
+/* Nodos y aristas del grafo */
+.graph-node {
+    -fx-background-color: #2f3a40;
+    -fx-background-radius: 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 8, 0.2, 0, 2);
+}
+.graph-edge {
+    -fx-stroke: #6e7681;
+    -fx-stroke-width: 2.4;
+    -fx-opacity: 0.85;
+    -fx-stroke-line-cap: round;
+}
+.graph-edge.highlight {
+    -fx-stroke-width: 3.4;
+    -fx-opacity: 1;
+    -fx-stroke-line-cap: round;
+}
+
+/* ComboBox: texto oscuro dentro de la lista desplegable */
+.combo-box .list-cell { -fx-text-fill: #1c1e21; }
+.combo-box .text     { -fx-fill: #1c1e21; }

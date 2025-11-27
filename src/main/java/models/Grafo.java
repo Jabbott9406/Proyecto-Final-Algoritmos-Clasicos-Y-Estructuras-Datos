@@ -14,23 +14,51 @@ public class Grafo {
 
     private static final Grafo INSTANCE = new Grafo();
 
+    /**
+     * Grafo
+     * Objetivo: preparar la estructura base del grafo en memoria.
+     *           Aquí iniciamos el mapa (parada -> rutas que salen) y la lista observable de paradas.
+     * Retorno: ninguno.
+     */
     private Grafo() {
         mapa = new HashMap<>();
         paradas = FXCollections.observableArrayList();
     }
 
+    /**
+     * getInstance
+     * Objetivo: patrón singleton para usar un único grafo en toda la app.
+     *           Pedimos la instancia y trabajamos siempre con la misma.
+     * Retorno: Grafo (instancia única).
+     */
     public static Grafo getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * getParadas
+     * Objetivo: obtener la lista observable de paradas para que la UI se actualice cuando cambie.
+     * Retorno: ObservableList<Parada>.
+     */
     public ObservableList<Parada> getParadas() {
         return paradas;
     }
 
+    /**
+     * getMapa
+     * Objetivo: exponer el mapa interno (parada -> rutas que salen) para operaciones del modelo/algoritmos.
+     * Retorno: Map<Parada, List<Ruta>>.
+     */
     public Map<Parada, List<Ruta>> getMapa() {
         return mapa;
     }
 
+    /**
+     * agregarParada
+     * Objetivo: añadir una parada al grafo si no existe todavía y registrarla en la lista observable.
+     *           Esto permite que el resto de la app (tablas, combos) se entere al toque.
+     * Retorno: ninguno.
+     */
     public void agregarParada(Parada parada) {
         if (parada == null) throw new IllegalArgumentException("Parada no puede ser null");
         if (!mapa.containsKey(parada)) {
@@ -39,6 +67,12 @@ public class Grafo {
         }
     }
 
+    /**
+     * agregarRuta
+     * Objetivo: crear una ruta entre dos paradas, registrarla en el mapa y marcarla
+     *           como ruta de entrada del destino. Aquí validamos y preparamos claves si faltaban.
+     * Retorno: Ruta creada.
+     */
     public Ruta agregarRuta(String nombre, Parada inicio, Parada destino, double distancia, double tiempo, double costo) {
         if (inicio == null || destino == null) throw new IllegalArgumentException("inicio/destino no puede ser null");
         mapa.putIfAbsent(inicio, new ArrayList<>());
@@ -51,6 +85,13 @@ public class Grafo {
         return nuevaRuta;
     }
 
+    /**
+     * eliminarParada
+     * Objetivo: borrar una parada del grafo limpiando primero todas las rutas
+     *           que entran y salen de ella para no dejar referencias colgando.
+     *           Luego quitamos de la lista observable y avisamos a la DB.
+     * Retorno: ninguno.
+     */
     public void eliminarParada(Parada parada) {
         if (parada == null) throw new IllegalArgumentException("Parada no puede ser null");
 
@@ -69,12 +110,25 @@ public class Grafo {
         ParadaDAO.getInstance().eliminarParada(parada.getId());
     }
 
+    /**
+     * eliminarRuta
+     * Objetivo: remover una ruta del mapa y también del listado de rutas de entrada del destino.
+     *           Así mantenemos la consistencia en ambas direcciones.
+     * Retorno: ninguno.
+     */
     public void eliminarRuta(Ruta ruta) {
         if (ruta == null) throw new IllegalArgumentException("Ruta no puede ser null");
         mapa.get(ruta.getInicio()).remove(ruta);
         ruta.getDestino().eliminarRutaDeEntrada(ruta);
     }
 
+    /**
+     * modificarRuta
+     * Objetivo: actualizar los atributos de una ruta existente. Si cambia inicio/destino,
+     *           movemos la ruta entre listas del mapa y actualizamos las entradas del destino.
+     *           También reseteamos estado/evento a “Normal” para partir de valores consistentes.
+     * Retorno: ninguno.
+     */
     public void modificarRuta(Ruta ruta, String nuevoNombre, Parada nuevoInicio, Parada nuevoDestino, Double nuevaDistancia, Double nuevoTiempo, Double nuevoCosto) {
 
         if (ruta == null) throw new IllegalArgumentException("Ruta no puede ser null");
@@ -116,6 +170,12 @@ public class Grafo {
         ruta.setEstado(true);
     }
 
+    /**
+     * obtenerMejorRuta
+     * Objetivo: decidir qué algoritmo usar según el filtro y el estado de las rutas,
+     *           simular eventos antes de calcular y devolver el resumen de la mejor ruta.
+     * Retorno: RutaMasCorta con el camino y totales.
+     */
     public RutaMasCorta obtenerMejorRuta(Parada inicio, Parada destino, String filtro) {
         if (inicio == null || destino == null || filtro == null || filtro.isBlank())
             throw new IllegalArgumentException("inicio/destino/filtro no pueden ser null");
@@ -136,10 +196,19 @@ public class Grafo {
                     return new BellmanFord().calcular(this, inicio, destino, filtro);
                 }
             }
+            case "transbordos" -> {
+                return new BellmanFord().calcular(this, inicio, destino, "transbordos");
+            }
             default -> throw new IllegalArgumentException("Filtro desconocido: " + filtro);
         }
     }
 
+    /**
+     * simularEventosRetorno
+     * Objetivo: aplicar una simulación ligera de eventos a cada ruta (accidente, lluvia, retraso, etc.)
+     *           para que los algoritmos trabajen con valores dinámicos. Luego se resetean en las partes necesarias.
+     * Retorno: boolean indicando que la simulación corrió.
+     */
     private boolean simularEventosRetorno() {
         Random rand = new Random();
 
@@ -183,6 +252,13 @@ public class Grafo {
         return true;
     }
 
+    /**
+     * rutaMasCortaFloyd
+     * Objetivo: usar Floyd-Warshall para construir el camino óptimo según el filtro,
+     *           recalcular totales y devolver el resumen en RutaMasCorta.
+     *           También contamos transbordos con la misma lógica que el resto de la app.
+     * Retorno: RutaMasCorta o null si no hay camino.
+     */
     private RutaMasCorta rutaMasCortaFloyd(Parada inicio, Parada destino, String filtro) {
         Map<Parada, Map<Parada, List<Ruta>>> rutas = FloydWarshall.calcular(this, filtro);
 
@@ -217,18 +293,37 @@ public class Grafo {
 
         String evento = caminoRutas.get(caminoRutas.size() - 1).getEvento();
 
-        return new RutaMasCorta(caminoRutas, totalTiempo, totalCosto, totalDistancia, totalPeso, filtro, evento
-        );
+        RutaMasCorta rm = new RutaMasCorta(caminoRutas, totalTiempo, totalCosto, totalDistancia, totalPeso, filtro, evento);
+        // Nuevo: contar transbordos en FloydWarshall también
+        rm.setTransbordos(contarTransbordos(caminoRutas));
+        return rm;
     }
 
+    /**
+     * getRutasDeSalida
+     * Objetivo: devolver las rutas que salen desde una parada específica.
+     * Retorno: List<Ruta> (puede ser null si la parada no existe en el mapa).
+     */
     public List<Ruta> getRutasDeSalida(Parada parada) {
         return mapa.get(parada);
     }
 
+    /**
+     * getParadasList
+     * Objetivo: entregar una copia de las paradas registradas en el grafo.
+     *           Devolvemos una lista nueva para no exponer la estructura interna directamente.
+     * Retorno: List<Parada>.
+     */
     public List<Parada> getParadasList() {
         return new ArrayList<>(mapa.keySet());
     }
 
+    /**
+     * getRutas
+     * Objetivo: recopilar todas las rutas del grafo en una sola lista.
+     *           Útil para chequeos globales, como ver si hay rutas cerradas.
+     * Retorno: List<Ruta>.
+     */
     public List<Ruta> getRutas() {
         List<Ruta> todasRutas = new ArrayList<>();
         for (List<Ruta> rutas : mapa.values()) {
@@ -237,6 +332,12 @@ public class Grafo {
         return todasRutas;
     }
 
+    /**
+     * cargarDesdeDB
+     * Objetivo: traer paradas y rutas desde la base de datos y reconstruir el grafo en memoria.
+     *           Validamos que las paradas de cada ruta existan; si no, la ignoramos con log.
+     * Retorno: ninguno.
+     */
     public void cargarDesdeDB() {
         ParadaDAO paradaDAO = ParadaDAO.getInstance();
         HashMap<Long, Parada> paradasDB = paradaDAO.obtenerParadas();
@@ -261,5 +362,30 @@ public class Grafo {
                         " | Destino: " + (destino != null ? destino.getNombre() : "null"));
             }
         }
+    }
+
+    // Método para contar transbordos (no altera comentarios existentes)
+    private int contarTransbordos(List<Ruta> path) {
+        if (path == null || path.isEmpty()) return 0;
+        java.util.function.Function<Ruta,String> lineaDe = r -> {
+            Parada p = r.getInicio();
+            String tipo = (p != null && p.getTipo() != null && !p.getTipo().isBlank()) ? p.getTipo()
+                    : (r.getDestino()!=null && r.getDestino().getTipo()!=null && !r.getDestino().getTipo().isBlank()
+                    ? r.getDestino().getTipo()
+                    : r.getNombre());
+            String s = java.text.Normalizer.normalize(tipo, java.text.Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                    .toLowerCase(java.util.Locale.ROOT)
+                    .trim();
+            return s.isBlank() ? "-" : s;
+        };
+        String prev = null;
+        int trans = 0;
+        for (Ruta r : path) {
+            String lin = lineaDe.apply(r);
+            if (prev != null && !prev.equals(lin)) trans++;
+            prev = lin;
+        }
+        return trans;
     }
 }

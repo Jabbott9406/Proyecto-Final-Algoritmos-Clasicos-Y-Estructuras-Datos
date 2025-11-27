@@ -148,4 +148,10 @@ public class ListRutaController {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
+
+    @FXML
+    private void salir() {
+        Stage stage = (Stage) tableRutas.getScene().getWindow();
+        stage.close();
+    }
 }
