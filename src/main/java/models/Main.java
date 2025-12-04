@@ -5,17 +5,17 @@ package models;
 public class Main {
     public static void main(String[] args) {
 
-        Parada p1 = new Parada("A");
-        Parada p2 = new Parada("B");
-        Parada p3 = new Parada("C");
-        Parada p4 = new Parada("D");
-        Parada p5 = new Parada("E");
-        Parada p6 = new Parada("F");
-        Parada p7 = new Parada("G");
-        Parada p8 = new Parada("H");
+        Parada p1 = new Parada("A", "Tren");
+        Parada p2 = new Parada("B","Autobuses" );
+        Parada p3 = new Parada("C", "Tranvia");
+        Parada p4 = new Parada("D","Autobuses");
+        Parada p5 = new Parada("E", "Tren");
+        Parada p6 = new Parada("F", "Autobuses");
+        Parada p7 = new Parada("G", "Tranvia");
+        Parada p8 = new Parada("H", "Tren");
 
 
-        Grafo mapa = new Grafo();
+        Grafo mapa = Grafo.getInstance();
         mapa.agregarParada(p1);
         mapa.agregarParada(p2);
         mapa.agregarParada(p3);
@@ -39,9 +39,10 @@ public class Main {
         Ruta r12 = mapa.agregarRuta("R12", p7, p8,5,8,0);
         Ruta r13 = mapa.agregarRuta("R13", p6, p8,4,8,0);
 
-       // RutaMasCorta camino = new Dijkstra().rutaMasCorta(mapa,p1,p6,"distancia");
-        //System.out.println(camino);
+        RutaMasCorta camino = new Dijkstra().rutaMasCorta(mapa,p1,p6,"distancia");
+        System.out.println(camino);
 
-        //FloydWarshall .mostrarRutas(mapa,"distancia"); PARA INVOCAR FLOYD WARSHALL
+//
+//        //FloydWarshall .mostrarRutas(mapa,"distancia"); PARA INVOCAR FLOYD WARSHALL
     }
 }
