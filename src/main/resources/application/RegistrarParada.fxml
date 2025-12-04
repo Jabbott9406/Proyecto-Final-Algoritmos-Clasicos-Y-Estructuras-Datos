@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="437.0" prefWidth="700.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CRUDParadaController">
+<AnchorPane prefHeight="390.0" prefWidth="700.0" styleClass="parent" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CRUDParadaController">
 
     <VBox layoutX="7.0" layoutY="7.0" prefHeight="73.0" prefWidth="686.0" styleClass="dark-blue-header" stylesheets="@../css/Style.css">
         <children>
@@ -22,9 +22,9 @@
         </children>
     </VBox>
 
-    <ImageView fitHeight="200.0" fitWidth="180.0" layoutX="20.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="226.0" fitWidth="202.0" layoutX="14.0" layoutY="104.0" pickOnBounds="true" preserveRatio="true">
         <image>
-            <Image url="@../images/Logo.png" />
+            <Image url="@../images/LOGOPUCMM.png" />
         </image>
     </ImageView>
 

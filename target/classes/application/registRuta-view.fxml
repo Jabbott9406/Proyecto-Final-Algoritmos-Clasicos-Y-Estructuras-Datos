@@ -41,7 +41,7 @@
 
         <TextField fx:id="distanciaField" layoutX="411.0" layoutY="247.0" prefHeight="26.0" prefWidth="220.0" promptText="Introduzca la distancia..." />
 
-        <Label layoutX="125.0" layoutY="293.0" text="Tiempo:" textFill="WHITE">
+        <Label layoutX="125.0" layoutY="293.0" text="Tiempo (min):" textFill="WHITE">
             <font><Font name="Segoe ui" size="18.0" /></font>
         </Label>
 
