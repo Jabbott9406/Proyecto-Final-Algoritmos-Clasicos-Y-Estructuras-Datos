@@ -112,7 +112,7 @@ public class Menu2Controller {
      * Retorno: ninguno.
      */
     private void ocultarLabelsSidebar() {
-        for (Label l : Arrays.asList(lblMenu,lblHome,lblBus,lblRoute,lblSettings)) {
+        for (Label l : Arrays.asList(lblMenu,lblHome,lblBus,lblRoute)) {
             l.setVisible(false);
             l.setManaged(false);
             l.setOpacity(0);
@@ -138,7 +138,7 @@ public class Menu2Controller {
 
         // Animaciones de aparición/desaparición de cada label.
         ParallelTransition textPt = new ParallelTransition();
-        for (Label l : Arrays.asList(lblMenu,lblHome,lblBus,lblRoute,lblSettings)) {
+        for (Label l : Arrays.asList(lblMenu,lblHome,lblBus,lblRoute)) {
             if (expandido) {
                 l.setManaged(true);
                 l.setVisible(true);
