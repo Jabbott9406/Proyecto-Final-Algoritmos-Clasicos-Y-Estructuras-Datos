@@ -25,22 +25,27 @@
             <children>
             <Label prefHeight="74.0" prefWidth="914.0" style="-fx-background-color: #0b5ea8; -fx-background-radius: 10; -fx-border-radius: 10; -fx-text-fill: white;" text="                 Lista de Rutas">
                <font>
-                  <Font name="Segoe UI" size="56.0" />
+                  <Font name="Segoe ui" size="56.0" />
                </font>
             </Label>
             </children>
         </VBox>
 
-        <Button fx:id="btnModificar" layoutX="673.0" layoutY="457.0" mnemonicParsing="false" onAction="#modificarRutaSeleccionada" prefHeight="26.0" prefWidth="97.0" style="-fx-background-color: #0b5ea8;" styleClass="DarkBlue" stylesheets="@../css/Style.css" text="Modificar" textFill="WHITE">
+        <Button fx:id="btnModificar" layoutX="559.0" layoutY="459.0" mnemonicParsing="false" onAction="#modificarRutaSeleccionada" prefHeight="26.0" prefWidth="97.0" style="-fx-background-color: #0b5ea8;" styleClass="DarkBlue" stylesheets="@../css/Style.css" text="Modificar" textFill="WHITE">
             <font>
-                <Font name="Segoe UI" size="16.0" />
+                <Font name="Segoe ui" size="16.0" />
             </font>
         </Button>
 
-        <Button fx:id="btnEliminar" layoutX="786.0" layoutY="457.0" mnemonicParsing="false" onAction="#eliminarRutaSeleccionada" prefHeight="26.0" prefWidth="98.0" text="Eliminar">
+        <Button fx:id="btnEliminar" layoutX="672.0" layoutY="459.0" mnemonicParsing="false" onAction="#eliminarRutaSeleccionada" prefHeight="26.0" prefWidth="98.0" text="Eliminar">
             <font>
-                <Font name="Segoe UI" size="15.0" />
+                <Font name="Segoe ui" size="15.0" />
             </font>
         </Button>
+      <Button layoutX="778.0" layoutY="459.0" mnemonicParsing="false" onAction="#salir" onMouseClicked="#salir" prefHeight="29.0" prefWidth="108.0" text="Cancelar">
+         <font>
+            <Font name="Segoe UI" size="16.0" />
+         </font>
+      </Button>
     </children>
 </AnchorPane>

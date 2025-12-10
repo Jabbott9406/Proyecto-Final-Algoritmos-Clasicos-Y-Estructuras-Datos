@@ -1,234 +1,328 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import DataBase.ParadaDAO;
+import DataBase.RutaDAO;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.util.*;
 
 public class Grafo {
 
-    Map<Parada, List<Ruta>> mapa;
+    private Map<Parada, List<Ruta>> mapa;
+    private ObservableList<Parada> paradas;
 
-    public Grafo() {
+    private static final Grafo INSTANCE = new Grafo();
+
+    /**
+     * Grafo
+     * Objetivo: preparar la estructura base del grafo en memoria.
+     *           Aquí iniciamos el mapa (parada -> rutas que salen) y la lista observable de paradas.
+     * Retorno: ninguno.
+     */
+    private Grafo() {
         mapa = new HashMap<>();
+        paradas = FXCollections.observableArrayList();
     }
 
+    /**
+     * getInstance
+     * Objetivo: patrón singleton para usar un único grafo en toda la app.
+     *           Pedimos la instancia y trabajamos siempre con la misma.
+     * Retorno: Grafo (instancia única).
+     */
+    public static Grafo getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * getParadas
+     * Objetivo: obtener la lista observable de paradas para que la UI se actualice cuando cambie.
+     * Retorno: ObservableList<Parada>.
+     */
+    public ObservableList<Parada> getParadas() {
+        return paradas;
+    }
+
+    /**
+     * getMapa
+     * Objetivo: exponer el mapa interno (parada -> rutas que salen) para operaciones del modelo/algoritmos.
+     * Retorno: Map<Parada, List<Ruta>>.
+     */
     public Map<Parada, List<Ruta>> getMapa() {
         return mapa;
     }
+
     /**
-     * Nombre: agregarParada
-     * Paramétros: Parada.
-     * Funcionamiento: Creación de nueva parada y agregación al HashMap.
-     * Retorno: no retorna
-     *
+     * agregarParada
+     * Objetivo: añadir una parada al grafo si no existe todavía y registrarla en la lista observable.
+     *           Esto permite que el resto de la app (tablas, combos) se entere al toque.
+     * Retorno: ninguno.
      */
     public void agregarParada(Parada parada) {
         if (parada == null) throw new IllegalArgumentException("Parada no puede ser null");
-        mapa.putIfAbsent(parada, new ArrayList<>()); // Se crea la parada y la inicialización de un listado de rutas
-        // dependientes a ella.
+        if (!mapa.containsKey(parada)) {
+            mapa.put(parada, new ArrayList<>());
+            paradas.add(parada);
+        }
     }
-    //Validar duplicados
 
     /**
-     * Nombre: agregarRuta
-     * Paramétros: String, Parada, Parada, double, double, double.
-     * Funcionamiento: Creación de nueva ruta y agregación al HashMap.
-     * Retorno: no retorna
-     *
+     * agregarRuta
+     * Objetivo: crear una ruta entre dos paradas, registrarla en el mapa y marcarla
+     *           como ruta de entrada del destino. Aquí validamos y preparamos claves si faltaban.
+     * Retorno: Ruta creada.
      */
-
-    //revisar evento y transbordo
     public Ruta agregarRuta(String nombre, Parada inicio, Parada destino, double distancia, double tiempo, double costo) {
         if (inicio == null || destino == null) throw new IllegalArgumentException("inicio/destino no puede ser null");
         mapa.putIfAbsent(inicio, new ArrayList<>());
         mapa.putIfAbsent(destino, new ArrayList<>());
+
         Ruta nuevaRuta = new Ruta(nombre, inicio, destino, distancia, tiempo, costo);
         mapa.get(inicio).add(nuevaRuta);
         destino.agregarRutaDeEntrada(nuevaRuta);
+
         return nuevaRuta;
     }
 
     /**
-     * Nombre: eliminarParada
-     * Paramétros: Parada.
-     * Funcionamiento: se elimina del grafo la parada seleccionada y las rutas que salen de esta
-     * Retorno: no retorna
-     *
+     * eliminarParada
+     * Objetivo: borrar una parada del grafo limpiando primero todas las rutas
+     *           que entran y salen de ella para no dejar referencias colgando.
+     *           Luego quitamos de la lista observable y avisamos a la DB.
+     * Retorno: ninguno.
      */
     public void eliminarParada(Parada parada) {
         if (parada == null) throw new IllegalArgumentException("Parada no puede ser null");
-        if (!parada.getRutasDeEntrada().isEmpty()) {
-            for (int i = parada.getRutasDeEntrada().size() - 1; i >= 0; i--) { // Se recorre el listado de rutas que entran a la parada
-                eliminarRuta(parada.getRutasDeEntrada().get(i)); // Se eliminan las rutas mediante el llamado de la función.
-            }
+
+        for (int i = parada.getRutasDeEntrada().size() - 1; i >= 0; i--) {
+            eliminarRuta(parada.getRutasDeEntrada().get(i));
         }
-        //Se eliminan todas las rutas que salen de la parada
+
         if (mapa.get(parada) != null) {
             for (int j = mapa.get(parada).size() - 1; j >= 0; j--) {
                 eliminarRuta(mapa.get(parada).get(j));
             }
         }
-        mapa.remove(parada); // Se elimina la parada del HashMap.
 
+        mapa.remove(parada);
+        paradas.remove(parada);
+        ParadaDAO.getInstance().eliminarParada(parada.getId());
     }
 
     /**
-     * Nombre: eliminarRuta
-     * Paramétros: Ruta.
-     * Funcionamiento: se elimina del grafo la ruta seleccionada
-     * Retorno: no retorna
-     *
+     * eliminarRuta
+     * Objetivo: remover una ruta del mapa y también del listado de rutas de entrada del destino.
+     *           Así mantenemos la consistencia en ambas direcciones.
+     * Retorno: ninguno.
      */
     public void eliminarRuta(Ruta ruta) {
         if (ruta == null) throw new IllegalArgumentException("Ruta no puede ser null");
-        //Preguntar acerca de quedarse una parada sola
-        mapa.get(ruta.getInicio()).remove(ruta); // Se remueve la ruta de la parada inicial.
-        ruta.getDestino().eliminarRutaDeEntrada(ruta); // Se remueve la ruta de la parada final.
+        mapa.get(ruta.getInicio()).remove(ruta);
+        ruta.getDestino().eliminarRutaDeEntrada(ruta);
     }
 
     /**
-     * Nombre: modificarRuta
-     * Paramétros: Ruta, String, Parada, Parada, Double, Double, Double.
-     * Funcionamiento: se modifican los parametros diferentes a null de la ruta proporcionada,
-     * si no se desea modificar ciertos datos, entonces se coloca null para obviarlos.
-     * Retorno: no retorna
+     * modificarRuta
+     * Objetivo: actualizar los atributos de una ruta existente. Si cambia inicio/destino,
+     *           movemos la ruta entre listas del mapa y actualizamos las entradas del destino.
+     *           También reseteamos estado/evento a “Normal” para partir de valores consistentes.
+     * Retorno: ninguno.
      */
     public void modificarRuta(Ruta ruta, String nuevoNombre, Parada nuevoInicio, Parada nuevoDestino, Double nuevaDistancia, Double nuevoTiempo, Double nuevoCosto) {
+
         if (ruta == null) throw new IllegalArgumentException("Ruta no puede ser null");
-        if (nuevoNombre != null) {
-            ruta.setNombre(nuevoNombre);
-        }
+
+        // Cambiar nombre
+        if (nuevoNombre != null) ruta.setNombre(nuevoNombre);
+
+        // Cambiar inicio
         if (nuevoInicio != null && nuevoInicio != ruta.getInicio()) {
             mapa.putIfAbsent(nuevoInicio, new ArrayList<>());
-            mapa.get(ruta.getInicio()).remove(ruta); // Elimino la ruta actual del listado de rutas de la parada a cambiar
-            ruta.setInicio(nuevoInicio); // Se realiza el cambio de la parada antigua por la nueva
-            mapa.get(ruta.getInicio()).add(ruta); // Se agrega la ruta actaul al listado de rutas de la nueva parada
+            mapa.get(ruta.getInicio()).remove(ruta);
+            ruta.setInicio(nuevoInicio);
+            mapa.get(nuevoInicio).add(ruta);
         }
+
+        // Cambiar destino
         if (nuevoDestino != null && nuevoDestino != ruta.getDestino()) {
             mapa.putIfAbsent(nuevoDestino, new ArrayList<>());
-            ruta.getDestino().eliminarRutaDeEntrada(ruta); // Se accede al listado de rutas que apuntan a la parada antigua y se elimina la ruta actual
-            ruta.setDestino(nuevoDestino); // Se realiza el cambio de la parada antigua por la nueva
-            nuevoDestino.agregarRutaDeEntrada(ruta); // Se accede al listado de rutas que apuntan a la parada nueva y se agrega la ruta actual
+            ruta.getDestino().eliminarRutaDeEntrada(ruta);
+            ruta.setDestino(nuevoDestino);
+            nuevoDestino.agregarRutaDeEntrada(ruta);
         }
+
         if (nuevaDistancia != null) {
-            ruta.setDistancia((double) nuevaDistancia);
+            ruta.setDistancia(nuevaDistancia);
         }
-        if (nuevoCosto != null) {
-            ruta.setCosto((double) nuevoCosto);
-        }
+
         if (nuevoTiempo != null) {
-            ruta.setTiempo((double) nuevoTiempo);
+            ruta.setTiempo(nuevoTiempo);
+            ruta.setTiempoBase(nuevoTiempo);
         }
 
+        if (nuevoCosto != null) {
+            ruta.setCosto(nuevoCosto);
+            ruta.setCostoBase(nuevoCosto);
+        }
+
+        ruta.setEvento("Normal");
+        ruta.setEstado(true);
     }
 
     /**
-     * Nombre: modificarParada
-     * Paramétros: Parada, String.
-     * Funcionamiento: se modifican los parametros de la parada proporcionada.
-     * Retorno: no retorna
+     * obtenerMejorRuta
+     * Objetivo: decidir qué algoritmo usar según el filtro y el estado de las rutas,
+     *           simular eventos antes de calcular y devolver el resumen de la mejor ruta.
+     * Retorno: RutaMasCorta con el camino y totales.
      */
+    public RutaMasCorta obtenerMejorRuta(Parada inicio, Parada destino, String filtro) {
+        if (inicio == null || destino == null || filtro == null || filtro.isBlank())
+            throw new IllegalArgumentException("inicio/destino/filtro no pueden ser null");
 
-    public void modificarParada(Parada parada, String nombre) {
-        if (nombre != null && parada != null) {
-            parada.setNombre(nombre);
-        } else {
-            throw new IllegalArgumentException("Parada/nombre no puede ser null");
+        // Simular eventos antes de calcular rutas
+        simularEventosRetorno();
+
+        switch (filtro.toLowerCase()) {
+            case "distancia" -> {
+                return rutaMasCortaFloyd(inicio, destino, "distancia");
+            }
+            case "tiempo", "costo" -> {
+                // Usar Dijkstra si todas las rutas son normales, Bellman-Ford si hay rutas cerradas
+                boolean hayRutasCerradas = getRutas().stream().anyMatch(r -> !r.isEstado());
+                if (!hayRutasCerradas) {
+                    return new Dijkstra().rutaMasCorta(this, inicio, destino, filtro);
+                } else {
+                    return new BellmanFord().calcular(this, inicio, destino, filtro);
+                }
+            }
+            case "transbordos" -> {
+                return new BellmanFord().calcular(this, inicio, destino, "transbordos");
+            }
+            default -> throw new IllegalArgumentException("Filtro desconocido: " + filtro);
         }
-
     }
 
     /**
-     * Nombre: simularEventos
-     * Parámetros: ninguno
-     * Funcionamiento: recorre todas las rutas del mapa y simula eventos aleatorios
-     * que pueden afectar su estado o tiempo de recorrido. Los eventos posibles son:
-     * <p>
-     * 1) Accidente: deshabilita la ruta y marca el evento.
-     * 2) Retraso: incrementa el tiempo de la ruta en un 50%.
-     * 3) Lluvia: incrementa el tiempo de la ruta en un 20%.
-     * 4) Normal: no altera la ruta.
-     * <p>
-     * Probabilidades de ocurrencia:
-     * - Accidente: 10%
-     * - Retraso: 15%
-     * - Lluvia: 10%
-     * - Normal: 65%
-     * <p>
-     * Retorno: no retorna ningún valor.
+     * simularEventosRetorno
+     * Objetivo: aplicar una simulación ligera de eventos a cada ruta (accidente, lluvia, retraso, etc.)
+     *           para que los algoritmos trabajen con valores dinámicos. Luego se resetean en las partes necesarias.
+     * Retorno: boolean indicando que la simulación corrió.
      */
-
-    public void simularEventos() {
+    private boolean simularEventosRetorno() {
         Random rand = new Random();
 
         for (Parada p : mapa.keySet()) {
             for (Ruta r : mapa.get(p)) {
 
+                r.resetValores(); // solo al inicio de la simulación
+
                 int prob = rand.nextInt(100) + 1;
-                int categoria;
 
-                if (prob <= 10) categoria = 1;
-                else if (prob <= 25) categoria = 2;
-                else if (prob <= 35) categoria = 3;
-                else categoria = 4;
-
-                switch (categoria) {
-                    case 1:
-                        r.setEstado(false);
-                        r.setEvento("Accidente");
-                        System.out.println("Ha ocurrido un accidente en " + r.getNombre() +
-                                " (" + r.getInicio().getNombre() + " → " + r.getDestino().getNombre() + ")");
-                        break;
-
-                    case 2:
-                        r.setEstado(true);
-                        r.setEvento("Retraso");
-                        System.out.println("Hay retraso en " + r.getNombre());
-                        r.setTiempo(r.getTiempo() * 1.5);
-                        break;
-
-                    case 3:
-                        r.setEstado(true);
-                        r.setEvento("Lluvia");
-                        System.out.println("Lluvia en " + r.getNombre());
-                        r.setTiempo(r.getTiempo() * 1.2);
-                        break;
-
-                    case 4:
-                        r.setEstado(true);
-                        r.setEvento("Normal");
-                        break;
+                if (prob <= 5) { // ACCIDENTE GRAVE – RUTA CERRADA
+                    r.setEstado(false);
+                    r.setEvento("Accidente grave (Ruta cerrada)");
+                }
+                else if (prob <= 15) { // ACCIDENTE LEVE
+                    r.setEstado(true);
+                    r.setEvento("Accidente leve (Retraso severo)");
+                    r.setTiempo(r.getTiempoBase() * 2.0);
+                    r.setCosto(r.getCostoBase() * 1.3);
+                }
+                else if (prob <= 30) { // RETRASO
+                    r.setEstado(true);
+                    r.setEvento("Retraso");
+                    r.setTiempo(r.getTiempoBase() * 1.5);
+                    r.setCosto(r.getCostoBase() * 1.2);
+                }
+                else if (prob <= 40) { // LLUVIA
+                    r.setEstado(true);
+                    r.setEvento("Lluvia");
+                    r.setTiempo(r.getTiempoBase() * 1.2);
+                    r.setCosto(r.getCostoBase() * 1.1);
+                }
+                else { // NORMAL
+                    r.setEstado(true);
+                    r.setEvento("Normal");
+                    r.setTiempo(r.getTiempoBase());
+                    r.setCosto(r.getCostoBase());
                 }
             }
         }
+        return true;
     }
 
-    public void mostrarMapa() {
-        for (Parada parada : mapa.keySet()) {
-            System.out.println(parada + "--> " + mapa.get(parada));
+    /**
+     * rutaMasCortaFloyd
+     * Objetivo: usar Floyd-Warshall para construir el camino óptimo según el filtro,
+     *           recalcular totales y devolver el resumen en RutaMasCorta.
+     *           También contamos transbordos con la misma lógica que el resto de la app.
+     * Retorno: RutaMasCorta o null si no hay camino.
+     */
+    private RutaMasCorta rutaMasCortaFloyd(Parada inicio, Parada destino, String filtro) {
+        Map<Parada, Map<Parada, List<Ruta>>> rutas = FloydWarshall.calcular(this, filtro);
+
+        for (Parada p : mapa.keySet()) {
+            for (Ruta r : mapa.get(p)) {
+                r.resetValores();
+            }
         }
+
+        List<Ruta> caminoRutas = rutas
+                .getOrDefault(inicio, Collections.emptyMap())
+                .getOrDefault(destino, Collections.emptyList());
+
+        if (caminoRutas.isEmpty()) return null;
+
+        double totalTiempo = 0;
+        double totalCosto = 0;
+        double totalDistancia = 0;
+        double totalPeso = 0;
+
+        for (Ruta r : caminoRutas) {
+            totalTiempo += r.getTiempo();
+            totalCosto += r.getCosto();
+            totalDistancia += r.getDistancia();
+
+            switch (filtro.toLowerCase()) {
+                case "distancia" -> totalPeso += r.getDistancia();
+                case "tiempo"    -> totalPeso += r.getTiempo();
+                case "costo"     -> totalPeso += r.getCosto();
+            }
+        }
+
+        String evento = caminoRutas.get(caminoRutas.size() - 1).getEvento();
+
+        RutaMasCorta rm = new RutaMasCorta(caminoRutas, totalTiempo, totalCosto, totalDistancia, totalPeso, filtro, evento);
+        // Nuevo: contar transbordos en FloydWarshall también
+        rm.setTransbordos(contarTransbordos(caminoRutas));
+        return rm;
     }
 
+    /**
+     * getRutasDeSalida
+     * Objetivo: devolver las rutas que salen desde una parada específica.
+     * Retorno: List<Ruta> (puede ser null si la parada no existe en el mapa).
+     */
     public List<Ruta> getRutasDeSalida(Parada parada) {
-
         return mapa.get(parada);
     }
+
     /**
-     * Nombre: getParadas
-     * Parámetros: ninguno
-     * Funcionamiento: devuelve una lista con todas las paradas registradas en el grafo.
-     * Retorno: List<Parada>
+     * getParadasList
+     * Objetivo: entregar una copia de las paradas registradas en el grafo.
+     *           Devolvemos una lista nueva para no exponer la estructura interna directamente.
+     * Retorno: List<Parada>.
      */
-    public List<Parada> getParadas() {
+    public List<Parada> getParadasList() {
         return new ArrayList<>(mapa.keySet());
     }
+
     /**
-     * Nombre: getRutas
-     * Parámetros: ninguno
-     * Funcionamiento: devuelve una lista con todas las rutas registradas en el grafo.
-     * Retorno: List<Ruta>
+     * getRutas
+     * Objetivo: recopilar todas las rutas del grafo en una sola lista.
+     *           Útil para chequeos globales, como ver si hay rutas cerradas.
+     * Retorno: List<Ruta>.
      */
     public List<Ruta> getRutas() {
         List<Ruta> todasRutas = new ArrayList<>();
@@ -238,5 +332,60 @@ public class Grafo {
         return todasRutas;
     }
 
+    /**
+     * cargarDesdeDB
+     * Objetivo: traer paradas y rutas desde la base de datos y reconstruir el grafo en memoria.
+     *           Validamos que las paradas de cada ruta existan; si no, la ignoramos con log.
+     * Retorno: ninguno.
+     */
+    public void cargarDesdeDB() {
+        ParadaDAO paradaDAO = ParadaDAO.getInstance();
+        HashMap<Long, Parada> paradasDB = paradaDAO.obtenerParadas();
+        for (Parada p : paradasDB.values()) {
+            agregarParada(p);
+        }
 
+        RutaDAO rutaDAO = RutaDAO.getInstance();
+        HashMap<Long, Ruta> rutasDB = rutaDAO.obtenerRutas(new HashMap<>(), paradasDB);
+
+        for (Ruta r : rutasDB.values()) {
+            Parada inicio = r.getInicio();
+            Parada destino = r.getDestino();
+
+            if (inicio != null && destino != null) {
+                mapa.putIfAbsent(inicio, new ArrayList<>());
+                mapa.get(inicio).add(r);
+                destino.agregarRutaDeEntrada(r);
+            } else {
+                System.out.println("Ruta ignorada por tener parada inexistente: " + r.getNombre() +
+                        " | Inicio: " + (inicio != null ? inicio.getNombre() : "null") +
+                        " | Destino: " + (destino != null ? destino.getNombre() : "null"));
+            }
+        }
+    }
+
+    // Método para contar transbordos (no altera comentarios existentes)
+    private int contarTransbordos(List<Ruta> path) {
+        if (path == null || path.isEmpty()) return 0;
+        java.util.function.Function<Ruta,String> lineaDe = r -> {
+            Parada p = r.getInicio();
+            String tipo = (p != null && p.getTipo() != null && !p.getTipo().isBlank()) ? p.getTipo()
+                    : (r.getDestino()!=null && r.getDestino().getTipo()!=null && !r.getDestino().getTipo().isBlank()
+                    ? r.getDestino().getTipo()
+                    : r.getNombre());
+            String s = java.text.Normalizer.normalize(tipo, java.text.Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                    .toLowerCase(java.util.Locale.ROOT)
+                    .trim();
+            return s.isBlank() ? "-" : s;
+        };
+        String prev = null;
+        int trans = 0;
+        for (Ruta r : path) {
+            String lin = lineaDe.apply(r);
+            if (prev != null && !prev.equals(lin)) trans++;
+            prev = lin;
+        }
+        return trans;
+    }
 }

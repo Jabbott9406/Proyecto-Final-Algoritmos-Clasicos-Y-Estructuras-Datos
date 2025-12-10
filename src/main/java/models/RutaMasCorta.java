@@ -10,14 +10,24 @@ public class RutaMasCorta {
     private double totalDistancia;
     private double totalPeso;
     private String filtro;
+    private String evento;
+    private int transbordos;
 
-    public RutaMasCorta(List<Ruta> rutas, double totalTiempo, double totalCosto, double totalDistancia, double totalPeso, String filtro) {
+
+    public RutaMasCorta(List<Ruta> rutas,
+                        double totalTiempo,
+                        double totalCosto,
+                        double totalDistancia,
+                        double totalPeso,
+                        String filtro,
+                        String evento) {
         this.rutas = rutas;
         this.totalTiempo = totalTiempo;
         this.totalCosto = totalCosto;
         this.totalDistancia = totalDistancia;
         this.totalPeso = totalPeso;
         this.filtro = filtro;
+        this.evento = evento;
     }
 
     public List<Ruta> getRutas() {
@@ -36,12 +46,34 @@ public class RutaMasCorta {
         return totalDistancia;
     }
 
-    public String toString(){
+    public double getTotalPeso() {
+        return totalPeso;
+    }
+
+    public String getFiltro() {
+        return filtro;
+    }
+
+    public String getEvento() {
+        return evento;
+    }
+
+    public int getTransbordos() {
+        return transbordos;
+    }
+
+    public void setTransbordos(int transbordos) {
+        this.transbordos = transbordos;
+    }
+
+    @Override
+    public String toString() {
         return "Filtro = " + filtro + "\n"
-                +"TotalTiempo = " + totalTiempo + "\n"
-                +"TotalCosto = " + totalCosto + "\n"
-                +"TotalDistancia = " + totalDistancia + "\n"
-                +"TotalPeso = " + totalPeso + "\n"
-                +"Rutas : " + rutas.toString() + "\n";
+                + "Evento = " + evento + "\n"
+                + "TotalTiempo = " + totalTiempo + "\n"
+                + "TotalCosto = " + totalCosto + "\n"
+                + "TotalDistancia = " + totalDistancia + "\n"
+                + "TotalPeso = " + totalPeso + "\n"
+                + "Rutas : " + rutas.toString() + "\n";
     }
 }
